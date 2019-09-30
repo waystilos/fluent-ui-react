@@ -7665,9 +7665,9 @@ init-package-json@^1.10.3:
     validate-npm-package-name "^3.0.0"
 
 inline-style-expand-shorthand@^1.1.1:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/inline-style-expand-shorthand/-/inline-style-expand-shorthand-1.1.5.tgz#14da7b57efc3594416e3fb26324fbe3f0ef81f32"
-  integrity sha512-aTjEL+Gn8osIX64OM2a6zOi3jRFGDJKyOQrk6lf2/SRRPzZmCmrsHU9mk8Y0e9u8syBbeVboI0itkt8cY+3ptQ==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/inline-style-expand-shorthand/-/inline-style-expand-shorthand-1.2.0.tgz#951ed9918ba9fe87af0e11c20fd2fb1f5075cae2"
+  integrity sha512-YdteDMlG1StHeEXF7opaVfPMCIVO8B4TPjE6kZLwdhZdgjH3Q7lxwSe+89sMhdPN77F3quOYhBbqBE0+KXuHpA==
 
 inline-style-parser@0.1.1:
   version "0.1.1"
