@@ -69,9 +69,9 @@ const rendererConfig = {
 
     // Heads up!
     // This is required after fela-plugin-prefixer to resolve the array of fallback values prefixer produces.
+    felaPluginExpandShorthand(true),
     felaPluginFallbackValue(),
 
-    felaPluginExpandShorthand(true),
     felaPluginRtl(),
   ],
 }
