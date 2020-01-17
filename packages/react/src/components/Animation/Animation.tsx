@@ -1,16 +1,23 @@
+import {
+  getElementType,
+  getUnhandledProps,
+  unstable_createAnimationStyles as createAnimationStyles,
+  unstable_getStyles as getStyles,
+} from '@fluentui/react-bindings'
+import { ICSSInJSStyle } from '@fluentui/styles'
+import cx from 'classnames'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
-import cx from 'classnames'
+// @ts-ignore
+import { ThemeContext } from 'react-fela'
 
 import {
-  UIComponent,
   childrenExist,
-  StyledComponentProps,
-  commonPropTypes,
   ChildrenComponentProps,
-  ShorthandFactory,
+  commonPropTypes,
+  StyledComponentProps,
 } from '../../utils'
-import { WithAsProp, withSafeTypeForAs } from '../../types'
+import { ProviderContextPrepared, WithAsProp, withSafeTypeForAs } from '../../types'
 
 export interface AnimationProps
   extends StyledComponentProps,
@@ -79,49 +86,97 @@ export interface AnimationProps
   timingFunction?: string
 }
 
-class Animation extends UIComponent<WithAsProp<AnimationProps>, any> {
-  static create: ShorthandFactory<AnimationProps>
+const Animation: React.FC<WithAsProp<AnimationProps>> & {
+  className: string
+  handledProps: string[]
+} = props => {
+  const {
+    children,
+    className,
+    name,
+    delay,
+    direction,
+    duration,
+    fillMode,
+    iterationCount,
+    keyframeParams,
+    playState,
+    timingFunction,
+  } = props
 
-  static className = 'ui-animation'
+  const context: ProviderContextPrepared = React.useContext(ThemeContext)
+  const ref = React.useRef(null)
 
-  static displayName = 'Animation'
+  const animationStyles: ICSSInJSStyle = createAnimationStyles(
+    {
+      name,
+      keyframeParams,
+      duration,
+      delay,
+      iterationCount,
+      direction,
+      fillMode,
+      playState,
+      timingFunction,
+    },
+    context.theme,
+  )
 
-  static propTypes = {
-    ...commonPropTypes.createCommon({
-      accessibility: false,
-      animated: false,
-      content: false,
-      children: 'element',
-    }),
-    name: PropTypes.string,
-    delay: PropTypes.string,
-    direction: PropTypes.string,
-    duration: PropTypes.string,
-    fillMode: PropTypes.string,
-    iterationCount: PropTypes.string,
-    keyframeParams: PropTypes.object,
-    playState: PropTypes.string,
-    timingFunction: PropTypes.string,
-  }
+  const { classes } = getStyles({
+    disableAnimations: context.disableAnimations,
+    displayName: Animation.displayName,
+    props: {
+      styles: animationStyles,
+    },
+    renderer: context.renderer,
+    rtl: context.rtl,
+    saveDebug: fluentUIDebug => (ref.current = { fluentUIDebug }),
+    theme: context.theme,
+    _internal_resolvedComponentVariables: context._internal_resolvedComponentVariables,
+  })
 
-  renderComponent({ ElementType, classes, unhandledProps }) {
-    const { children } = this.props
+  const ElementType = getElementType(props)
+  const unhandledProps = getUnhandledProps(Animation.handledProps /* TODO fix any */ as any, props)
 
-    const child =
-      childrenExist(children) && (React.Children.only(children) as React.ReactElement<any>)
-    const result = child
-      ? React.cloneElement(child, {
-          className: cx(child.props.className, classes.children),
-        })
-      : ''
+  const child =
+    childrenExist(children) && (React.Children.only(children) as React.ReactElement<any>)
+  const result = child
+    ? React.cloneElement(child, {
+        className: cx(child.props.className, classes.root),
+      })
+    : ''
 
-    return (
-      <ElementType className={classes.root} {...unhandledProps}>
-        {result}
-      </ElementType>
-    )
-  }
+  return (
+    <ElementType
+      className={cx(Animation.className, className)}
+      style={{ display: 'inline-block' }}
+      {...unhandledProps}
+    >
+      {result}
+    </ElementType>
+  )
 }
+
+Animation.className = 'ui-animation'
+Animation.displayName = 'Animation'
+Animation.propTypes = {
+  ...commonPropTypes.createCommon({
+    accessibility: false,
+    content: false,
+    children: 'element',
+  }),
+  children: PropTypes.element,
+  name: PropTypes.string,
+  delay: PropTypes.string,
+  direction: PropTypes.string,
+  duration: PropTypes.string,
+  fillMode: PropTypes.string,
+  iterationCount: PropTypes.string,
+  keyframeParams: PropTypes.object,
+  playState: PropTypes.string,
+  timingFunction: PropTypes.string,
+}
+Animation.handledProps = Object.keys(Animation.propTypes)
 
 /**
  * An Animation provides animation effects to rendered elements.
