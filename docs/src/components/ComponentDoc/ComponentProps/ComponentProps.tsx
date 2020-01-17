@@ -2,9 +2,9 @@ import * as _ from 'lodash'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 
-import { getComponentGroup, scrollToAnchor } from 'docs/src/utils'
+import { getComponentGroup, scrollToAnchor } from '../../../utils'
 import ComponentPropsOutline from './ComponentPropsOutline'
-import { Flex, Header } from '@stardust-ui/react'
+import { Flex, Header } from '@fluentui/react'
 import ComponentPropCard from './ComponentPropCard'
 
 export default class ComponentProps extends React.Component<any, any> {

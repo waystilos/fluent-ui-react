@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import { Menu, Segment } from '@stardust-ui/react'
+import { Menu, Segment } from '@fluentui/react'
 
 import ComponentSidebarSection from './ComponentSidebarSection'
 
@@ -31,7 +31,7 @@ class ComponentSidebar extends React.Component<ComponentSidebarProps, any> {
   }
 
   fetchSections = (displayName: string) => {
-    import(`docs/src/exampleMenus/${displayName}.examples.json`).then(sections => {
+    import(`../../../exampleMenus/${displayName}.examples.json`).then(sections => {
       this.setState({ sections: sections.default })
     })
   }

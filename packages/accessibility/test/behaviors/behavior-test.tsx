@@ -48,12 +48,14 @@ import {
   chatMessageBehavior,
   toolbarBehavior,
   toolbarItemBehavior,
+  toolbarMenuBehavior,
   toolbarMenuItemCheckboxBehavior,
+  toolbarMenuItemBehavior,
   toolbarMenuItemRadioBehavior,
   toolbarMenuRadioGroupBehavior,
   toolbarRadioGroupBehavior,
   toolbarRadioGroupItemBehavior,
-  tooltipBehavior,
+  tooltipAsDescriptionBehavior,
   tooltipAsLabelBehavior,
   menuButtonBehavior,
   splitButtonBehavior,
@@ -64,7 +66,20 @@ import {
   treeAsListBehavior,
   treeItemAsListItemBehavior,
   treeTitleAsListItemTitleBehavior,
-} from '@stardust-ui/accessibility'
+  carouselItemBehavior,
+  carouselBehavior,
+  tableBehavior,
+  tableCellBehavior,
+  tableHeaderCellBehavior,
+  tableRowBehavior,
+  gridNestedBehavior,
+  gridHeaderRowBehavior,
+  gridHeaderCellBehavior,
+  gridRowNestedBehavior,
+  gridCellBehavior,
+  gridCellMultipleFocusableBehavior,
+  gridCellWithFocusableElementBehavior,
+} from '@fluentui/accessibility'
 import { TestHelper } from './testHelper'
 import definitions from './testDefinitions'
 
@@ -117,12 +132,14 @@ testHelper.addBehavior('chatBehavior', chatBehavior)
 testHelper.addBehavior('chatMessageBehavior', chatMessageBehavior)
 testHelper.addBehavior('toolbarBehavior', toolbarBehavior)
 testHelper.addBehavior('toolbarItemBehavior', toolbarItemBehavior)
+testHelper.addBehavior('toolbarMenuBehavior', toolbarMenuBehavior)
+testHelper.addBehavior('toolbarMenuItemBehavior', toolbarMenuItemBehavior)
 testHelper.addBehavior('toolbarMenuItemCheckboxBehavior', toolbarMenuItemCheckboxBehavior)
 testHelper.addBehavior('toolbarMenuItemRadioBehavior', toolbarMenuItemRadioBehavior)
 testHelper.addBehavior('toolbarMenuRadioGroupBehavior', toolbarMenuRadioGroupBehavior)
 testHelper.addBehavior('toolbarRadioGroupBehavior', toolbarRadioGroupBehavior)
 testHelper.addBehavior('toolbarRadioGroupItemBehavior', toolbarRadioGroupItemBehavior)
-testHelper.addBehavior('tooltipBehavior', tooltipBehavior)
+testHelper.addBehavior('tooltipAsDescriptionBehavior', tooltipAsDescriptionBehavior)
 testHelper.addBehavior('tooltipAsLabelBehavior', tooltipAsLabelBehavior)
 testHelper.addBehavior('splitButtonBehavior', splitButtonBehavior)
 testHelper.addBehavior('treeBehavior', treeBehavior)
@@ -132,5 +149,18 @@ testHelper.addBehavior('textAreaBehavior', textAreaBehavior)
 testHelper.addBehavior('treeAsListBehavior', treeAsListBehavior)
 testHelper.addBehavior('treeItemAsListItemBehavior', treeItemAsListItemBehavior)
 testHelper.addBehavior('treeTitleAsListItemTitleBehavior', treeTitleAsListItemTitleBehavior)
+testHelper.addBehavior('carouselItemBehavior', carouselItemBehavior)
+testHelper.addBehavior('carouselBehavior', carouselBehavior)
+testHelper.addBehavior('tableBehavior', tableBehavior)
+testHelper.addBehavior('tableCellBehavior', tableCellBehavior)
+testHelper.addBehavior('tableHeaderCellBehavior', tableHeaderCellBehavior)
+testHelper.addBehavior('tableRowBehavior', tableRowBehavior)
+testHelper.addBehavior('gridNestedBehavior', gridNestedBehavior)
+testHelper.addBehavior('gridHeaderRowBehavior', gridHeaderRowBehavior)
+testHelper.addBehavior('gridHeaderCellBehavior', gridHeaderCellBehavior)
+testHelper.addBehavior('gridRowNestedBehavior', gridRowNestedBehavior)
+testHelper.addBehavior('gridCellBehavior', gridCellBehavior)
+testHelper.addBehavior('gridCellMultipleFocusableBehavior', gridCellMultipleFocusableBehavior)
+testHelper.addBehavior('gridCellWithFocusableElementBehavior', gridCellWithFocusableElementBehavior)
 
 testHelper.run(behaviorMenuItems)

@@ -1,8 +1,9 @@
-import { Accessibility, dialogBehavior } from '@stardust-ui/accessibility'
-import { Unstable_NestingAuto } from '@stardust-ui/react-component-nesting-registry'
-import { EventListener } from '@stardust-ui/react-component-event-listener'
-import { Ref, toRefObject } from '@stardust-ui/react-component-ref'
-import * as customPropTypes from '@stardust-ui/react-proptypes'
+import { Accessibility, dialogBehavior } from '@fluentui/accessibility'
+import { FocusTrapZoneProps } from '@fluentui/react-bindings'
+import { Unstable_NestingAuto } from '@fluentui/react-component-nesting-registry'
+import { EventListener } from '@fluentui/react-component-event-listener'
+import { Ref, toRefObject } from '@fluentui/react-component-ref'
+import * as customPropTypes from '@fluentui/react-proptypes'
 import * as _ from 'lodash'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
@@ -16,8 +17,7 @@ import {
   doesNodeContainClick,
   applyAccessibilityKeyHandlers,
   getOrGenerateIdFromShorthand,
-} from '../../lib'
-import { FocusTrapZoneProps } from '../../lib/accessibility/FocusZone'
+} from '../../utils'
 import { ComponentEventHandler, WithAsProp, ShorthandValue, withSafeTypeForAs } from '../../types'
 import Button, { ButtonProps } from '../Button/Button'
 import ButtonGroup from '../Button/ButtonGroup'
@@ -25,12 +25,14 @@ import Box, { BoxProps } from '../Box/Box'
 import Header, { HeaderProps } from '../Header/Header'
 import Portal, { TriggerAccessibility } from '../Portal/Portal'
 import Flex from '../Flex/Flex'
+import DialogFooter, { DialogFooterProps } from './DialogFooter'
 
 export interface DialogSlotClassNames {
   header: string
   headerAction: string
   content: string
   overlay: string
+  footer: string
 }
 
 export interface DialogProps
@@ -48,13 +50,13 @@ export interface DialogProps
   /** A dialog can contain a cancel button. */
   cancelButton?: ShorthandValue<ButtonProps>
 
-  /** Controls whether or not a dialog should close when a click outside is happened. */
+  /** A dialog can be closed when a user clicks outside of it. */
   closeOnOutsideClick?: boolean
 
   /** A dialog can contain a confirm button. */
   confirmButton?: ShorthandValue<ButtonProps>
 
-  /** Initial value for 'open'. */
+  /** A dialog can be open by default. */
   defaultOpen?: boolean
 
   /** A dialog can contain a header. */
@@ -63,28 +65,31 @@ export interface DialogProps
   /** A dialog can contain a button next to the header. */
   headerAction?: ShorthandValue<ButtonProps>
 
+  /** A dialog can contain a footer. */
+  footer?: ShorthandValue<DialogFooterProps>
+
   /**
-   * Called after user's click a cancel button.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props.
+   * Called after a user clicks the cancel button.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props.
    */
   onCancel?: ComponentEventHandler<DialogProps>
 
   /**
-   * Called after user's click a confirm button.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props.
+   * Called after a user clicks the confirm button.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props.
    */
   onConfirm?: ComponentEventHandler<DialogProps>
 
   /**
-   * Called after user's opened a dialog.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props.
+   * Called after a user opens the dialog.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props.
    */
   onOpen?: ComponentEventHandler<DialogProps>
 
-  /** Defines whether a dialog is displayed. */
+  /** A dialog's open state can be controlled. */
   open?: boolean
 
   /** A dialog can contain a overlay. */
@@ -137,10 +142,12 @@ class Dialog extends AutoControlledComponent<WithAsProp<DialogProps>, DialogStat
     backdrop: true,
     closeOnOutsideClick: true,
     overlay: {},
+    footer: {},
     trapFocus: true,
   }
 
   static autoControlledProps = ['open']
+  static Footer = DialogFooter
 
   actionHandlers = {
     closeAndFocusTrigger: e => {
@@ -246,8 +253,35 @@ class Dialog extends AutoControlledComponent<WithAsProp<DialogProps>, DialogStat
       overlay,
       trapFocus,
       trigger,
+      footer,
     } = this.props
     const { open } = this.state
+
+    const cancelElement = Button.create(cancelButton, {
+      overrideProps: this.handleCancelButtonOverrides,
+    })
+    const confirmElement = Button.create(confirmButton, {
+      defaultProps: () => ({
+        primary: true,
+      }),
+      overrideProps: this.handleConfirmButtonOverrides,
+    })
+
+    const dialogActions =
+      (cancelElement || confirmElement) &&
+      ButtonGroup.create(actions, {
+        defaultProps: () => ({
+          styles: styles.actions,
+        }),
+        overrideProps: {
+          content: (
+            <Flex gap="gap.smaller">
+              {cancelElement}
+              {confirmElement}
+            </Flex>
+          ),
+        },
+      })
 
     const dialogContent = (
       <Ref innerRef={this.contentRef}>
@@ -260,49 +294,36 @@ class Dialog extends AutoControlledComponent<WithAsProp<DialogProps>, DialogStat
           {...applyAccessibilityKeyHandlers(accessibility.keyHandlers.popup, unhandledProps)}
         >
           {Header.create(header, {
-            defaultProps: {
+            defaultProps: () => ({
               as: 'h2',
               className: Dialog.slotClassNames.header,
               styles: styles.header,
               ...accessibility.attributes.header,
-            },
+            }),
           })}
           {Button.create(headerAction, {
-            defaultProps: {
+            defaultProps: () => ({
               className: Dialog.slotClassNames.headerAction,
               styles: styles.headerAction,
               text: true,
               iconOnly: true,
               ...accessibility.attributes.headerAction,
-            },
+            }),
           })}
 
           {Box.create(content, {
-            defaultProps: {
+            defaultProps: () => ({
               styles: styles.content,
               className: Dialog.slotClassNames.content,
               ...accessibility.attributes.content,
-            },
+            }),
           })}
 
-          {ButtonGroup.create(actions, {
-            defaultProps: {
-              styles: styles.actions,
-            },
+          {DialogFooter.create(footer, {
             overrideProps: {
-              content: (
-                <Flex gap="gap.smaller">
-                  {Button.create(cancelButton, {
-                    overrideProps: this.handleCancelButtonOverrides,
-                  })}
-                  {Button.create(confirmButton, {
-                    defaultProps: {
-                      primary: true,
-                    },
-                    overrideProps: this.handleConfirmButtonOverrides,
-                  })}
-                </Flex>
-              ),
+              content: dialogActions,
+              className: Dialog.slotClassNames.footer,
+              styles: styles.footer,
             },
           })}
         </ElementType>
@@ -334,10 +355,10 @@ class Dialog extends AutoControlledComponent<WithAsProp<DialogProps>, DialogStat
                 }}
               >
                 {Box.create(overlay, {
-                  defaultProps: {
+                  defaultProps: () => ({
                     className: Dialog.slotClassNames.overlay,
                     styles: styles.overlay,
-                  },
+                  }),
                   overrideProps: { content: dialogContent },
                 })}
               </Ref>
@@ -369,10 +390,11 @@ Dialog.slotClassNames = {
   headerAction: `${Dialog.className}__headerAction`,
   content: `${Dialog.className}__content`,
   overlay: `${Dialog.className}__overlay`,
+  footer: `${Dialog.className}__footer`,
 }
 
 /**
- * A Dialog displays important information on top of a page which usually requires user's attention, confirmation or interaction.
+ * A Dialog displays important information on top of a page which requires a user's attention, confirmation, or interaction.
  * Dialogs are purposefully interruptive, so they should be used sparingly.
  *
  * @accessibility

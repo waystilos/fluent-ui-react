@@ -1,7 +1,7 @@
-import { CodeSnippet, CodeSnippetProps } from '@stardust-ui/docs-components'
+import { CodeSnippet, CodeSnippetProps } from '@fluentui/docs-components'
 import * as React from 'react'
 
-import renderElementToJSX from 'docs/src/components/ExampleSnippet/renderElementToJSX'
+import renderElementToJSX from '../ExampleSnippet/renderElementToJSX'
 
 type ComponentPlaygroundSnippetProps = {
   element?: React.ReactElement
@@ -11,9 +11,7 @@ type ComponentPlaygroundSnippetProps = {
 /**
  * This component uses `react-element-to-jsx-string` to get a generated markup with props.
  */
-const ComponentPlaygroundSnippet: React.FunctionComponent<
-  ComponentPlaygroundSnippetProps
-> = props => {
+const ComponentPlaygroundSnippet: React.FunctionComponent<ComponentPlaygroundSnippetProps> = props => {
   const { element, component, ...rest } = props
 
   if (process.env.NODE_ENV !== 'production') {

@@ -5,14 +5,14 @@ import {
   getPackageName,
   FailedConstraintsExplanation,
 } from './utils'
-import config from '../../../config'
+import config from '../../config'
 import { DangerJS } from '../types'
 
 const { paths } = config
 
 /**
  * This check uses the following logic:
- * - request runtime dependencies of @stardust-ui/react package (by crawling the code, starting from index file),
+ * - request runtime dependencies of @fluentui/react package (by crawling the code, starting from index file),
  * - for each of the runtime dependencies:
  *    - get corresponding set of version restrictions (by analyzing related package.json files),
  *    - get list of approved dependency's versions,

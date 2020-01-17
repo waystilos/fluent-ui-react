@@ -1,5 +1,5 @@
-import { handleRef, Ref } from '@stardust-ui/react-component-ref'
-import * as customPropTypes from '@stardust-ui/react-proptypes'
+import { handleRef, Ref } from '@fluentui/react-component-ref'
+import * as customPropTypes from '@fluentui/react-proptypes'
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import * as _ from 'lodash'
@@ -14,7 +14,7 @@ import {
   WithAsProp,
   withSafeTypeForAs,
 } from '../../types'
-import { ComponentSlotStylesInput, ComponentVariablesInput } from '../../themes/types'
+import { ComponentSlotStylesInput, ComponentVariablesInput } from '@fluentui/styles'
 import Downshift, {
   DownshiftState,
   StateChangeOptions,
@@ -31,17 +31,17 @@ import {
   commonPropTypes,
   UIComponentProps,
   isFromKeyboard,
-} from '../../lib'
-import List from '../List/List'
+} from '../../utils'
+import List, { ListProps } from '../List/List'
 import DropdownItem, { DropdownItemProps } from './DropdownItem'
 import DropdownSelectedItem, { DropdownSelectedItemProps } from './DropdownSelectedItem'
 import DropdownSearchInput, { DropdownSearchInputProps } from './DropdownSearchInput'
 import Button, { ButtonProps } from '../Button/Button'
-import { screenReaderContainerStyles } from '../../lib/accessibility/Styles/accessibilityStyles'
+import { screenReaderContainerStyles } from '../../utils/accessibility/Styles/accessibilityStyles'
 import ListItem, { ListItemProps } from '../List/ListItem'
 import Icon, { IconProps } from '../Icon/Icon'
 import Portal from '../Portal/Portal'
-import { ALIGNMENTS, POSITIONS, Popper, PositioningProps } from '../../lib/positioner'
+import { ALIGNMENTS, POSITIONS, Popper, PositioningProps } from '../../utils/positioner'
 
 export interface DropdownSlotClassNames {
   clearIndicator: string
@@ -58,141 +58,144 @@ export interface DropdownSlotClassNames {
 export interface DropdownProps
   extends UIComponentProps<DropdownProps, DropdownState>,
     PositioningProps {
-  /** The index of the currently active selected item, if dropdown has a multiple selection. */
+  /** The index of the currently selected item, if the dropdown supports multiple selection. */
   activeSelectedIndex?: number
 
-  /** Item can show check indicator if selected. */
+  /** A dropdown item can show a check indicator if it is selected. */
   checkable?: boolean
 
   /** A slot for a selected indicator in the dropdown list. */
   checkableIndicator?: ShorthandValue<IconProps>
 
-  /** A dropdown can be clearable and let users remove their selection. */
+  /** A dropdown can be clearable to let users remove their selection. */
   clearable?: boolean
 
-  /** A slot for a clearing indicator. */
+  /** A slot for the clearing indicator. */
   clearIndicator?: ShorthandValue<IconProps>
 
-  /** The initial value for the index of the currently active selected item, in a multiple selection. */
+  /** The initial value for the index of the currently selected item in a multiple selection. */
   defaultActiveSelectedIndex?: number
 
-  /** Initial value for 'open' in uncontrolled mode */
+  /** The initial value for 'open' in uncontrolled mode. */
   defaultOpen?: boolean
 
-  /** The initial value for the index of the list item to be highlighted. */
+  /** The initial list item index to highlight. */
   defaultHighlightedIndex?: number
 
-  /** The initial value for the search query, if the dropdown is also a search. */
+  /** The initial value for the search query if the dropdown has `search` enabled. */
   defaultSearchQuery?: string
 
-  /** The initial value or value array, if the array has multiple selection. */
+  /** The initial value (or value array if the array has multiple selection). */
   defaultValue?: ShorthandValue<DropdownItemProps> | ShorthandCollection<DropdownItemProps>
 
-  /** A dropdown can take the width of its container. */
+  /** A dropdown can fill the width of its container. */
   fluid?: boolean
 
   /** Object with callbacks for generating announcements for item selection and removal. */
   getA11ySelectionMessage?: {
     /**
      * Callback that creates custom accessibility message a screen reader narrates on item added to selection.
-     * @param {ShorthandValue} item - Dropdown added element.
+     * @param item - Dropdown added element.
      */
     onAdd?: (item: ShorthandValue<DropdownItemProps>) => string
     /**
      * Callback that creates custom accessibility message a screen reader narrates on item removed from selection.
-     * @param {ShorthandValue} item - Dropdown removed element.
+     * @param item - Dropdown removed element.
      */
     onRemove?: (item: ShorthandValue<DropdownItemProps>) => string
   }
 
   /**
    * Callback that provides status announcement message with number of items in the list, using Arrow Up/Down keys to navigate through them and, if multiple, using Arrow Left/Right to navigate through selected items.
-   * @param {DownshiftA11yStatusMessageOptions<ShorthandValue>} messageGenerationProps - Object with properties to generate message from. See getA11yStatusMessage from Downshift repo.
+   * @param messageGenerationProps - Object with properties to generate message from. See getA11yStatusMessage from Downshift repo.
    */
   getA11yStatusMessage?: (
     options: DownshiftA11yStatusMessageOptions<ShorthandValue<DropdownItemProps>>,
   ) => string
 
-  /** A dropdown can open with the first option already highlighted. */
+  /** A dropdown can highlight the first option when it opens. */
   highlightFirstItemOnOpen?: boolean
 
-  /** The index of the list item to be highlighted. */
+  /** The index of the list item to highlight. */
   highlightedIndex?: number
 
-  /** A dropdown can be formatted to appear inline in the content of other components. */
+  /** A dropdown can be formatted to appear inline next to other elements. */
   inline?: boolean
 
-  /** Array of props for generating list options (Dropdown.Item[]) and selected item labels(Dropdown.SelectedItem[]), if it's a multiple selection. */
+  /** Array of props for generating list options (Dropdown.Item[]) and selected item labels (Dropdown.SelectedItem[]), if it's a multiple selection. */
   items?: ShorthandCollection<DropdownItemProps>
 
   /**
-   * Function that converts an item to string. Used when dropdown has the `search` boolean prop set to true.
+   * A function that converts an item to string. Used when dropdown has `search` enabled.
    * By default, it:
-   * - returns the `header` property (if it exists on an item)
-   * - converts an item to string (if the item is a primitive)
+   * - returns the `header` property if it exists on an item
+   * - stringifies the item if it is a primitive type
    */
   itemToString?: (item: ShorthandValue<DropdownItemProps>) => string
 
   /** Used when comparing two items in multiple selection. Default comparison is by the header prop. */
   itemToValue?: (item: ShorthandValue<DropdownItemProps>) => any
 
+  /** A slot for dropdown list. */
+  list?: ShorthandValue<ListProps>
+
   /** A dropdown can show that it is currently loading data. */
   loading?: boolean
 
-  /** A message to be displayed in the list when dropdown is loading. */
+  /** A message to be displayed in the list when the dropdown is loading. */
   loadingMessage?: ShorthandValue<ListItemProps>
 
   /** When selecting an element with Tab, focus stays on the dropdown by default. If true, the focus will jump to next/previous element in DOM. Only available to multiple selection dropdowns. */
   moveFocusOnTab?: boolean
 
-  /** A dropdown can perform a multiple selection. */
+  /** A dropdown can allow a user to select multiple items. */
   multiple?: boolean
 
-  /** A message to be displayed in the list when dropdown has no available items to show. */
+  /** A message to be displayed in the list when the dropdown has no items. */
   noResultsMessage?: ShorthandValue<ListItemProps>
 
   /**
-   * Callback for change in dropdown open value.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {Object} data - All props and the new open flag value in the edit text.
+   * Called when the dropdown opens or closes.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props, with `open` reflecting the new open state.
    */
   onOpenChange?: ComponentEventHandler<DropdownProps>
 
   /**
-   * Callback for change in dropdown search query value.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {Object} data - All props and the new search query value in the edit text.
+   * Called when the dropdown's search query changes.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props, with `searchQuery` reflecting its new value.
    */
   onSearchQueryChange?: ComponentEventHandler<DropdownProps>
 
   /**
-   * Callback for change in dropdown active value(s).
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {Object} data - All props and the new active value(s).
+   * Called when the dropdown's selected item(s) change.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props and the new selected value(s).
    */
   onSelectedChange?: ComponentEventHandler<DropdownProps>
 
-  /** Defines whether dropdown is displayed. */
+  /** A dropdown's open state can be controlled. */
   open?: boolean
 
   /** A placeholder message for the input field. */
   placeholder?: string
 
   /**
-   * A custom render function for the item.
+   * A render function to customize how items are rendered in the dropdown.
    *
-   * @param {React.ReactType} Component - The computed component for this slot.
-   * @param {object} props - The computed props for this slot.
-   * @param {ReactNode|ReactNodeArray} children - The computed children for this slot.
+   * @param Component - The computed component for this slot.
+   * @param props - The computed props for this slot.
+   * @param children - The computed children for this slot.
    */
   renderItem?: ShorthandRenderFunction<DropdownItemProps>
 
   /**
    * A custom render function for the selected item. Only applicable with the `multiple` prop.
    *
-   * @param {React.ReactType} Component - The computed component for this slot.
-   * @param {object} props - The computed props for this slot.
-   * @param {ReactNode|ReactNodeArray} children - The computed children for this slot.
+   * @param Component - The computed component for this slot.
+   * @param props - The computed props for this slot.
+   * @param children - The computed children for this slot.
    */
   renderSelectedItem?: ShorthandRenderFunction<DropdownSelectedItemProps>
 
@@ -204,19 +207,19 @@ export interface DropdownProps
         searchQuery: string,
       ) => ShorthandCollection<DropdownItemProps>)
 
-  /** Component for the search input query. */
+  /** A search dropdown's input can be customized. */
   searchInput?: ShorthandValue<DropdownSearchInputProps>
 
   /** Sets search query value (controlled mode). */
   searchQuery?: string
 
-  /** Controls appearance of toggle indicator that shows/hides items list. */
+  /** Controls the appearance of the indicator that shows/hides the list of items. */
   toggleIndicator?: ShorthandValue<IconProps>
 
-  /** Controls appearance of the trigger button if it's a selection dropdown and not a search. */
+  /** Controls the appearance of the trigger button if it's a selection dropdown (not a search). */
   triggerButton?: ShorthandValue<ButtonProps>
 
-  /** Sets currently selected value(s) (controlled mode). */
+  /** Sets the dropdown's currently selected value(s) in controlled mode. */
   value?: ShorthandValue<DropdownItemProps> | ShorthandCollection<DropdownItemProps>
 }
 
@@ -280,6 +283,7 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
     items: customPropTypes.collectionShorthand,
     itemToString: PropTypes.func,
     itemToValue: PropTypes.func,
+    list: customPropTypes.itemShorthand,
     loading: PropTypes.bool,
     loadingMessage: customPropTypes.itemShorthand,
     moveFocusOnTab: PropTypes.bool,
@@ -309,8 +313,8 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
   static defaultProps = {
     align: 'start',
     as: 'div',
-    checkableIndicator: 'stardust-checkmark',
-    clearIndicator: 'stardust-close',
+    checkableIndicator: 'icon-checkmark',
+    clearIndicator: 'icon-close',
     itemToString: item => {
       if (!item || React.isValidElement(item)) {
         return ''
@@ -327,6 +331,7 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
       // targets DropdownItem shorthand objects
       return (item as any).header || String(item)
     },
+    list: {},
     position: 'below',
     toggleIndicator: {},
     triggerButton: {},
@@ -343,6 +348,11 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
   static Item = DropdownItem
   static SearchInput = DropdownSearchInput
   static SelectedItem = DropdownSelectedItem
+
+  componentWillUnmount() {
+    this.clearStartingString.cancel()
+    this.clearA11ySelectionMessage.cancel()
+  }
 
   getInitialAutoControlledState({ multiple, search }: DropdownProps): DropdownState {
     return {
@@ -361,14 +371,7 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
     }
   }
 
-  a11yStatusTimeout: any
-  charKeysPressedTimeout: any
   defaultTriggerButtonId = _.uniqueId('dropdown-trigger-button-')
-
-  componentWillUnmount() {
-    clearTimeout(this.a11yStatusTimeout)
-    clearTimeout(this.charKeysPressedTimeout)
-  }
 
   /**
    * Used to compute the filtered items (by value and search query) and, if needed,
@@ -491,11 +494,11 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
                   </div>
                   {showClearIndicator
                     ? Icon.create(clearIndicator, {
-                        defaultProps: {
+                        defaultProps: () => ({
                           className: Dropdown.slotClassNames.clearIndicator,
                           styles: styles.clearIndicator,
                           xSpacing: 'none',
-                        },
+                        }),
                         overrideProps: (predefinedProps: IconProps) => ({
                           onClick: (e: React.SyntheticEvent<HTMLElement>, iconProps: IconProps) => {
                             _.invoke(predefinedProps, 'onClick', e, iconProps)
@@ -504,13 +507,13 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
                         }),
                       })
                     : Icon.create(toggleIndicator, {
-                        defaultProps: {
+                        defaultProps: () => ({
                           className: Dropdown.slotClassNames.toggleIndicator,
                           name: 'chevron-down',
                           styles: styles.toggleIndicator,
                           outline: true,
                           size: 'small',
-                        },
+                        }),
                         overrideProps: (predefinedProps: IconProps) => ({
                           onClick: (e, indicatorProps: IconProps) => {
                             _.invoke(predefinedProps, 'onClick', e, indicatorProps)
@@ -576,14 +579,14 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
     return (
       <Ref innerRef={this.buttonRef}>
         {Button.create(triggerButton, {
-          defaultProps: {
+          defaultProps: () => ({
             className: Dropdown.slotClassNames.triggerButton,
             content,
             id: triggerButtonId,
             fluid: true,
             styles: styles.triggerButton,
             ...restTriggerButtonProps,
-          },
+          }),
           overrideProps: (predefinedProps: IconProps) => ({
             onClick: e => {
               onClick(e)
@@ -626,13 +629,13 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
     const noPlaceholder = searchQuery.length > 0 || (multiple && value.length > 0)
 
     return DropdownSearchInput.create(searchInput || {}, {
-      defaultProps: {
+      defaultProps: () => ({
         className: Dropdown.slotClassNames.searchInput,
         placeholder: noPlaceholder ? '' : placeholder,
         inline,
         variables,
         inputRef: this.inputRef,
-      },
+      }),
       overrideProps: this.handleSearchInputOverrides(
         highlightedIndex,
         rtl,
@@ -655,7 +658,7 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
     getInputProps: (options?: GetInputPropsOptions) => any,
     rtl: boolean,
   ) {
-    const { align, offset, position, search, unstable_pinned } = this.props
+    const { align, offset, position, search, unstable_pinned, list } = this.props
     const { open } = this.state
     const items = open ? this.renderItems(styles, variables, getItemProps, highlightedIndex) : []
     const { innerRef, ...accessibilityMenuProps } = getMenuProps(
@@ -697,16 +700,27 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
           unstable_pinned={unstable_pinned}
           positioningDependencies={[items.length]}
         >
-          <List
-            className={Dropdown.slotClassNames.itemsList}
-            {...accessibilityMenuProps}
-            styles={styles.list}
-            tabIndex={search ? undefined : -1} // needs to be focused when trigger button is activated.
-            aria-hidden={!open}
-            onFocus={this.handleTriggerButtonOrListFocus}
-            onBlur={this.handleListBlur}
-            items={items}
-          />
+          {List.create(list, {
+            defaultProps: () => ({
+              className: Dropdown.slotClassNames.itemsList,
+              ...accessibilityMenuProps,
+              styles: styles.list,
+              items,
+              tabIndex: search ? undefined : -1, // needs to be focused when trigger button is activated.
+              'aria-hidden': !open,
+            }),
+
+            overrideProps: (predefinedProps: ListProps) => ({
+              onFocus: (e: React.SyntheticEvent<HTMLElement>, listProps: IconProps) => {
+                this.handleTriggerButtonOrListFocus()
+                _.invoke(predefinedProps, 'onClick', e, listProps)
+              },
+              onBlur: (e: React.SyntheticEvent<HTMLElement>, listProps: IconProps) => {
+                this.handleListBlur(e)
+                _.invoke(predefinedProps, 'onBlur', e, listProps)
+              },
+            }),
+          })}
         </Popper>
       </Ref>
     )
@@ -728,11 +742,12 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
     } = this.props
     const { filteredItems, value } = this.state
 
-    const items = _.map(filteredItems, (item, index) => render =>
-      render(item, () => {
+    const items = _.map(filteredItems, (item, index) => ({
+      children: () => {
         const selected = value.indexOf(item) !== -1
+
         return DropdownItem.create(item, {
-          defaultProps: {
+          defaultProps: () => ({
             className: Dropdown.slotClassNames.item,
             active: highlightedIndex === index,
             selected,
@@ -744,29 +759,29 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
               !item.hasOwnProperty('key') && {
                 key: (item as any).header,
               }),
-          },
+          }),
           overrideProps: this.handleItemOverrides(item, index, getItemProps, selected),
           render: renderItem,
         })
-      }),
-    )
+      },
+    }))
 
     return [
       ...items,
       loading &&
         ListItem.create(loadingMessage, {
-          defaultProps: {
+          defaultProps: () => ({
             key: 'loading-message',
             styles: styles.loadingMessage,
-          },
+          }),
         }),
       !loading &&
         items.length === 0 &&
         ListItem.create(noResultsMessage, {
-          defaultProps: {
+          defaultProps: () => ({
             key: 'no-results-message',
             styles: styles.noResultsMessage,
-          },
+          }),
         }),
     ]
   }
@@ -782,7 +797,7 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
     return value.map((item: DropdownItemProps, index) =>
       // (!) an item matches DropdownItemProps
       DropdownSelectedItem.create(item, {
-        defaultProps: {
+        defaultProps: () => ({
           className: Dropdown.slotClassNames.selectedItem,
           active: this.isSelectedItemActive(index),
           variables,
@@ -790,7 +805,7 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
             !item.hasOwnProperty('key') && {
               key: (item as any).header,
             }),
-        },
+        }),
         overrideProps: this.handleSelectedItemOverrides(item, rtl),
         render: renderSelectedItem,
       }),
@@ -1190,7 +1205,7 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
    * Sets highlightedIndex to be the item that starts with the character keys the
    * user has typed. Only used in non-search dropdowns.
    *
-   * @param {string} keystring The string the item needs to start with. It is composed by typing keys in fast succession.
+   * @param keystring - The string the item needs to start with. It is composed by typing keys in fast succession.
    */
   setHighlightedIndexOnCharKeyDown = (keyString: string): void => {
     const { highlightedIndex, filteredItemStrings, startingString } = this.state
@@ -1347,20 +1362,22 @@ class Dropdown extends AutoControlledComponent<WithAsProp<DropdownProps>, Dropdo
    * so it is not read anymore via virtual cursor.
    */
   setA11ySelectionMessage = (a11ySelectionStatus: string): void => {
-    clearTimeout(this.a11yStatusTimeout)
     this.setState({ a11ySelectionStatus })
-    this.a11yStatusTimeout = setTimeout(() => {
-      this.setState({ a11ySelectionStatus: '' })
-    }, Dropdown.a11yStatusCleanupTime)
+    this.clearA11ySelectionMessage()
   }
 
   setStartingString = (startingString: string): void => {
-    clearTimeout(this.charKeysPressedTimeout)
     this.setState({ startingString })
-    this.charKeysPressedTimeout = setTimeout(() => {
-      this.setState({ startingString: '' })
-    }, Dropdown.charKeyPressedCleanupTime)
+    this.clearStartingString()
   }
+
+  clearA11ySelectionMessage = _.debounce(() => {
+    this.setState({ a11ySelectionStatus: '' })
+  }, Dropdown.a11yStatusCleanupTime)
+
+  clearStartingString = _.debounce(() => {
+    this.setState({ startingString: '' })
+  }, Dropdown.charKeyPressedCleanupTime)
 }
 
 Dropdown.slotClassNames = {

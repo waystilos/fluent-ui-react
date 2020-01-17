@@ -1,13 +1,15 @@
 import * as React from 'react'
-import { Button, Dialog } from '@stardust-ui/react'
-import { useBooleanKnob } from '@stardust-ui/docs-components'
+import { Button, Dialog } from '@fluentui/react'
+import { useBooleanKnob } from '@fluentui/docs-components'
 
 const DialogExampleHeaderAction: React.FC = () => {
   const [open, setOpen] = useBooleanKnob({ name: 'open' })
   return (
     <Dialog
       open={open}
-      onOpen={(e, { open }) => setOpen(open)}
+      onOpen={() => setOpen(true)}
+      onCancel={() => setOpen(false)}
+      onConfirm={() => setOpen(false)}
       confirmButton="Confirm"
       content="Are you sure you want to confirm this action?"
       header="Action confirmation"

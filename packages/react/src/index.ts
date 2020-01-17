@@ -1,9 +1,10 @@
-import * as themes from './themes'
-
 //
 // Theme
 //
-export { themes }
+// work around api-extractor limitation
+import { fontAwesome, teams, teamsDark, teamsHighContrast } from './themes'
+
+export const themes = { fontAwesome, teams, teamsDark, teamsHighContrast }
 export * from './themes/types'
 export * from './themes/colorUtils'
 
@@ -49,6 +50,9 @@ export { default as ChatMessage } from './components/Chat/ChatMessage'
 export * from './components/Checkbox/Checkbox'
 export { default as Checkbox } from './components/Checkbox/Checkbox'
 
+export * from './components/Debug/Debug'
+export { default as Debug } from './components/Debug/Debug'
+
 export * from './components/Design/Design'
 export { default as Design } from './components/Design/Design'
 
@@ -60,6 +64,9 @@ export { default as Divider } from './components/Divider/Divider'
 
 export * from './components/Dialog/Dialog'
 export { default as Dialog } from './components/Dialog/Dialog'
+
+export * from './components/Dialog/DialogFooter'
+export { default as DialogFooter } from './components/Dialog/DialogFooter'
 
 export * from './components/Dropdown/Dropdown'
 export { default as Dropdown } from './components/Dropdown/Dropdown'
@@ -184,9 +191,7 @@ export { default as HierarchicalTree } from './components/HierarchicalTree/Hiera
 export * from './components/HierarchicalTree/HierarchicalTreeItem'
 export { default as HierarchicalTreeItem } from './components/HierarchicalTree/HierarchicalTreeItem'
 export * from './components/HierarchicalTree/HierarchicalTreeTitle'
-export {
-  default as HierarchicalTreeTitle,
-} from './components/HierarchicalTree/HierarchicalTreeTitle'
+export { default as HierarchicalTreeTitle } from './components/HierarchicalTree/HierarchicalTreeTitle'
 
 export * from './components/Tree/Tree'
 export { default as Tree } from './components/Tree/Tree'
@@ -211,15 +216,30 @@ export { default as Tooltip } from './components/Tooltip/Tooltip'
 export * from './components/Tooltip/TooltipContent'
 export { default as TooltipContent } from './components/Tooltip/TooltipContent'
 
+export * from './components/Carousel/Carousel'
+export { default as Carousel } from './components/Carousel/Carousel'
+export * from './components/Carousel/CarouselItem'
+export { default as CarouselItem } from './components/Carousel/CarouselItem'
+export * from './components/Carousel/CarouselNavigation'
+export { default as CarouselNavigation } from './components/Carousel/CarouselNavigation'
+export * from './components/Carousel/CarouselNavigationItem'
+export { default as CarouselNavigationItem } from './components/Carousel/CarouselNavigationItem'
+
+export * from './components/Table/Table'
+export { default as Table } from './components/Table/Table'
+export * from './components/Table/TableRow'
+export { default as TableRow } from './components/Table/TableRow'
+export * from './components/Table/TableCell'
+export { default as TableCell } from './components/Table/TableCell'
+
 //
 // Utilities
 //
-export { default as mergeThemes } from './lib/mergeThemes'
-export * from './lib/createStardustComponent'
-export * from './lib'
+export * from './utils/createComponent'
+export * from './utils'
 export * from './types'
-export { Popper as UNSTABLE_Popper } from './lib/positioner'
-export * from './lib/positioner/types'
+export { Popper as UNSTABLE_Popper } from './utils/positioner'
+export * from './utils/positioner/types'
 
 //
 // FocusZone
@@ -232,7 +252,7 @@ import {
   getNextElement,
   getPreviousElement,
   focusAsync,
-} from './lib/accessibility/FocusZone/focusUtilities'
+} from '@fluentui/react-bindings'
 
 export const FocusZoneUtilities = {
   getFirstTabbable,
@@ -243,10 +263,8 @@ export const FocusZoneUtilities = {
   getPreviousElement,
   focusAsync,
 }
-export * from './lib/accessibility/FocusZone/FocusZone.types'
-export * from './lib/accessibility/FocusZone/FocusTrapZone.types'
-export * from './lib/accessibility/FocusZone/AutoFocusZone.types'
-export * from './lib/accessibility/reactTypes'
 
-export * from '@stardust-ui/accessibility'
-export * from '@stardust-ui/react-component-ref'
+export * from '@fluentui/accessibility'
+export * from '@fluentui/react-component-ref'
+export * from '@fluentui/react-bindings'
+export * from '@fluentui/styles'

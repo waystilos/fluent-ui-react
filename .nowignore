@@ -9,6 +9,7 @@ docs/src/currentBundleStats.json
 docs/src/exampleMenus
 docs/src/exampleSources
 e2e
+lib/
 node_modules
 packages/**/dist
 packages/**/test
@@ -17,7 +18,6 @@ perf/dist
 .editorconfig
 .gitignore
 .prettierignore
-.snyk
 codecov.yml
 dangerfile.ts
 jest.config.js

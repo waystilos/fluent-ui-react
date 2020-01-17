@@ -18,6 +18,7 @@ export { default as ChatMessage } from './components/Chat/chatMessageStyles'
 export { default as Checkbox } from './components/Checkbox/checkboxStyles'
 
 export { default as Dialog } from './components/Dialog/dialogStyles'
+export { default as DialogFooter } from './components/Dialog/dialogFooterStyles'
 
 export { default as Divider } from './components/Divider/dividerStyles'
 
@@ -40,12 +41,8 @@ export { default as Header } from './components/Header/headerStyles'
 export { default as HeaderDescription } from './components/Header/headerDescriptionStyles'
 
 export { default as HierarchicalTree } from './components/HierarchicalTree/hierarchicalTreeStyles'
-export {
-  default as HierarchicalTreeItem,
-} from './components/HierarchicalTree/hierarchicalTreeItemStyles'
-export {
-  default as HierarchicalTreeTitle,
-} from './components/HierarchicalTree/hierarchicalTreeTitleStyles'
+export { default as HierarchicalTreeItem } from './components/HierarchicalTree/hierarchicalTreeItemStyles'
+export { default as HierarchicalTreeTitle } from './components/HierarchicalTree/hierarchicalTreeTitleStyles'
 
 export { default as Icon } from './components/Icon/iconStyles'
 
@@ -112,3 +109,12 @@ export { default as Video } from './components/Video/videoStyles'
 
 export { default as Tooltip } from './components/Tooltip/tooltipStyles'
 export { default as TooltipContent } from './components/Tooltip/tooltipContentStyles'
+
+export { default as Carousel } from './components/Carousel/carouselStyles'
+export { default as CarouselItem } from './components/Carousel/carouselItemStyles'
+export { default as CarouselNavigation } from './components/Carousel/carouselNavigationStyles'
+export { default as CarouselNavigationItem } from './components/Carousel/carouselNavigationItemStyles'
+
+export { default as Table } from './components/Table/tableStyles'
+export { default as TableRow } from './components/Table/tableRowStyles'
+export { default as TableCell } from './components/Table/tableCellStyles'

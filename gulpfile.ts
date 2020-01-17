@@ -2,7 +2,7 @@ import { task, parallel } from 'gulp'
 import * as path from 'path'
 import * as tsPaths from 'tsconfig-paths'
 
-import config from './config'
+import config from './build/config'
 
 const { compilerOptions } = require('./build/tsconfig.docs.json')
 
@@ -24,7 +24,6 @@ require('./build/gulp/tasks/test-unit')
 require('./build/gulp/tasks/test-projects')
 require('./build/gulp/tasks/perf')
 require('./build/gulp/tasks/test-e2e')
-require('./build/gulp/tasks/test-vulns')
 require('./build/gulp/tasks/test-circulars')
 require('./build/gulp/tasks/test-dependencies')
 

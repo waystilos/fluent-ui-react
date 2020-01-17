@@ -1,5 +1,5 @@
-import { Accessibility, listBehavior } from '@stardust-ui/accessibility'
-import * as customPropTypes from '@stardust-ui/react-proptypes'
+import { Accessibility, listBehavior } from '@fluentui/accessibility'
+import * as customPropTypes from '@fluentui/react-proptypes'
 import * as _ from 'lodash'
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
@@ -12,13 +12,16 @@ import {
   commonPropTypes,
   rtlTextContainer,
   applyAccessibilityKeyHandlers,
-} from '../../lib'
+  createShorthandFactory,
+  ShorthandFactory,
+} from '../../utils'
 import ListItem, { ListItemProps } from './ListItem'
 import {
   WithAsProp,
   ComponentEventHandler,
   withSafeTypeForAs,
   ShorthandCollection,
+  ReactChildren,
 } from '../../types'
 
 export interface ListSlotClassNames {
@@ -49,8 +52,8 @@ export interface ListProps extends UIComponentProps, ChildrenComponentProps {
 
   /**
    * Event for request to change 'selectedIndex' value.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props and proposed value.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props and proposed value.
    */
   onSelectedIndexChange?: ComponentEventHandler<ListProps>
 
@@ -62,6 +65,9 @@ export interface ListProps extends UIComponentProps, ChildrenComponentProps {
 
   /** A horizontal list displays elements horizontally. */
   horizontal?: boolean
+
+  /** An optional wrapper function. */
+  wrap?: (children: ReactChildren) => React.ReactNode
 }
 
 export interface ListState {
@@ -91,11 +97,13 @@ class List extends AutoControlledComponent<WithAsProp<ListProps>, ListState> {
     defaultSelectedIndex: PropTypes.number,
     onSelectedIndexChange: PropTypes.func,
     horizontal: PropTypes.bool,
+    wrap: PropTypes.func,
   }
 
   static defaultProps = {
     as: 'ul',
     accessibility: listBehavior as Accessibility,
+    wrap: children => children,
   }
 
   static autoControlledProps = ['selectedIndex']
@@ -116,6 +124,8 @@ class List extends AutoControlledComponent<WithAsProp<ListProps>, ListState> {
     'variables',
   ]
 
+  static create: ShorthandFactory<ListProps>
+
   handleItemOverrides = (predefinedProps: ListItemProps) => {
     const { selectable } = this.props
 
@@ -135,7 +145,8 @@ class List extends AutoControlledComponent<WithAsProp<ListProps>, ListState> {
   }
 
   renderComponent({ ElementType, classes, accessibility, unhandledProps }) {
-    const { children } = this.props
+    const { children, items, wrap } = this.props
+    const hasContent = childrenExist(children) || (items && items.length > 0)
 
     return (
       <ElementType
@@ -145,7 +156,7 @@ class List extends AutoControlledComponent<WithAsProp<ListProps>, ListState> {
         {...applyAccessibilityKeyHandlers(accessibility.keyHandlers.root, unhandledProps)}
         className={classes.root}
       >
-        {childrenExist(children) ? children : this.renderItems()}
+        {hasContent && wrap(childrenExist(children) ? children : this.renderItems())}
       </ElementType>
     )
   }
@@ -161,12 +172,12 @@ class List extends AutoControlledComponent<WithAsProp<ListProps>, ListState> {
         maybeSelectableItemProps.selected = index === selectedIndex
       }
 
-      const itemProps = {
+      const itemProps = () => ({
         className: List.slotClassNames.item,
         ..._.pick(this.props, List.itemProps),
         ...maybeSelectableItemProps,
         index,
-      }
+      })
 
       return ListItem.create(item, {
         defaultProps: itemProps,
@@ -175,6 +186,8 @@ class List extends AutoControlledComponent<WithAsProp<ListProps>, ListState> {
     })
   }
 }
+
+List.create = createShorthandFactory({ Component: List, mappedArrayProp: 'items' })
 
 /**
  * A List displays a group of related sequential items.

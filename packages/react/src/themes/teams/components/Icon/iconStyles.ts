@@ -1,14 +1,14 @@
 import * as _ from 'lodash'
-
-import { callable, pxToRem, SizeValue } from '../../../../lib'
 import {
+  callable,
   ComponentSlotStylesPrepared,
-  ICSSInJSStyle,
-  StrictColorScheme,
-  ItemType,
-  ThemeIconSpec,
   FontIconSpec,
-} from '../../../types'
+  ICSSInJSStyle,
+  ThemeIconSpec,
+} from '@fluentui/styles'
+
+import { pxToRem, SizeValue } from '../../../../utils'
+import { StrictColorScheme, ItemType } from '../../../types'
 import { IconXSpacing, IconProps } from '../../../../components/Icon/Icon'
 import { getStyle as getSvgStyle } from './svg'
 import { IconVariables, iconColorAreas } from './iconVariables'

@@ -1,7 +1,10 @@
 import { debugRoot, debugArea, debugGap } from '../../../../styles/debugStyles'
-import { ComponentSlotStylesPrepared, ICSSInJSStyle } from '../../../types'
+import { ComponentSlotStylesPrepared, ICSSInJSStyle } from '@fluentui/styles'
+import { LayoutProps } from '../../../../components/Layout/Layout'
 
-const layoutStyles: ComponentSlotStylesPrepared = {
+const countTrue = items => items.filter(Boolean).length
+
+const layoutStyles: ComponentSlotStylesPrepared<LayoutProps> = {
   root: ({ props }): ICSSInJSStyle => {
     const {
       alignItems,
@@ -36,6 +39,7 @@ const layoutStyles: ComponentSlotStylesPrepared = {
         .join(' '),
       ...(vertical && {
         gridAutoFlow: 'row',
+        '-ms-grid-columns': '1fr',
       }),
       ...rootCSS,
     }
@@ -49,6 +53,7 @@ const layoutStyles: ComponentSlotStylesPrepared = {
     ...(p.debug && debugArea()),
     alignItems: 'center',
     display: 'inline-flex',
+    [p.vertical ? '-ms-grid-row' : '-ms-grid-column']: '1',
     ...p.startCSS,
   }),
 
@@ -56,6 +61,11 @@ const layoutStyles: ComponentSlotStylesPrepared = {
     ...(p.debug && debugArea()),
     alignItems: 'center',
     display: 'grid',
+    [p.vertical ? '-ms-grid-row' : '-ms-grid-column']: countTrue([
+      p.start,
+      p.start && p.gap,
+      p.main,
+    ]),
     ...p.mainCSS,
   }),
 
@@ -63,6 +73,13 @@ const layoutStyles: ComponentSlotStylesPrepared = {
     ...(p.debug && debugArea()),
     alignItems: 'center',
     display: 'inline-flex',
+    [p.vertical ? '-ms-grid-row' : '-ms-grid-column']: countTrue([
+      p.start,
+      p.start && p.gap,
+      p.main,
+      p.main && p.gap,
+      p.end,
+    ]),
     ...p.endCSS,
   }),
 }

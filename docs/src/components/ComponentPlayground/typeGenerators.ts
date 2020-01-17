@@ -3,11 +3,11 @@ import {
   useNumberKnob,
   useSelectKnob,
   useStringKnob,
-} from '@stardust-ui/docs-components'
+} from '@fluentui/docs-components'
 import * as _ from 'lodash'
 
-import { ComponentInfo, KnobComponentGenerators, KnobGenerator } from 'docs/src/types'
-import componentInfoContext from 'docs/src/utils/componentInfoContext'
+import { ComponentInfo, KnobComponentGenerators, KnobGenerator } from '../../types'
+import componentInfoContext from '../../utils/componentInfoContext'
 import * as componentGenerators from './componentGenerators'
 import createHookGenerator from './createHookGenerator'
 

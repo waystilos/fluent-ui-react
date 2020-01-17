@@ -1,6 +1,5 @@
+import { ICSSInJSStyle, SiteVariablesPrepared } from '@fluentui/styles'
 import * as React from 'react'
-
-import { ICSSInJSStyle, SiteVariablesPrepared } from '../types'
 
 type CSSBorderStyles = Pick<React.CSSProperties, 'borderWidth' | 'borderRadius'>
 
@@ -56,12 +55,14 @@ const getBorderFocusStyles = (args: BorderFocusStyles): ICSSInJSStyle => {
       borderColor: 'transparent',
 
       ':before': getPseudoElementStyles({
+        zIndex: '1',
         borderEdgeValue: borderPadding == null ? '0' : `-${borderPadding}`,
         borderColor: focusInnerBorderColor,
         ...defaultBorderStyles,
       }),
 
       ':after': getPseudoElementStyles({
+        zIndex: '1',
         borderEdgeValue:
           borderPadding == null
             ? `-${borderWidth}`

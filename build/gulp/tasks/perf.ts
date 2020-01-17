@@ -1,26 +1,26 @@
 import express from 'express'
 import fs from 'fs'
-import { task, series } from 'gulp'
+import { series, task } from 'gulp'
+import { colors, log } from 'gulp-util'
 import _ from 'lodash'
 import ProgressBar from 'progress'
 import puppeteer from 'puppeteer'
-import rimraf from 'rimraf'
+import del from 'del'
 import { argv } from 'yargs'
+import markdownTable from 'markdown-table'
 
 import {
   MeasuredValues,
   PerExamplePerfMeasures,
   ProfilerMeasure,
   ProfilerMeasureCycle,
-  ProfilerMeasureWithBaseline,
   ReducedMeasures,
 } from '../../../perf/types'
-import config from '../../../config'
+import config from '../../config'
 import webpackPlugin from '../plugins/gulp-webpack'
 import { safeLaunchOptions } from 'build/puppeteer.config'
 
 const { paths } = config
-const { colors, log } = require('gulp-load-plugins')().util
 
 const DEFAULT_RUN_TIMES = 10
 let server
@@ -36,49 +36,28 @@ const computeMeasureMedian = (measures: number[]) => {
   return (values[lowMiddle] + values[highMiddle]) / 2
 }
 
-// This is a hardcoded constant which makes normalized results comparable with real render times.
-// By running baseline test on multiple machines, we found out the baseline example takes ~15/7 ms to render in average.
-// So if we divide render times by baseline times we must multiply them back by the fixed coefficient to get comparable numbers.
-const NORMALIZATION_COEFFICIENT: Record<MeasuredValues, number> = {
-  actualTime: 15,
-  baseTime: 7,
-}
-
-const normalizeMeasure = (measure: ProfilerMeasureWithBaseline, key: MeasuredValues): number =>
-  (measure[key] * NORMALIZATION_COEFFICIENT[key]) / measure.baseline[key]
-
-const reduceMeasures = (
-  measures: ProfilerMeasureWithBaseline[],
-  key: MeasuredValues,
-): ReducedMeasures => {
+const reduceMeasures = (measures: ProfilerMeasure[], key: MeasuredValues): ReducedMeasures => {
   if (measures.length === 0) throw new Error('`measures` are empty')
 
   let min = measures[0][key]
   let max = measures[0][key]
   let sum = measures[0][key]
-  let sumNormalized = normalizeMeasure(measures[0], key)
 
   for (let i = 1; i < measures.length; i++) {
     if (measures[i][key] < min) min = measures[i][key]
     if (measures[i][key] > max) max = measures[i][key]
 
     sum += measures[i][key]
-    sumNormalized += normalizeMeasure(measures[i], key)
   }
 
   return {
     avg: floor(sum / measures.length),
-    avgNormalized: floor(sumNormalized / measures.length),
     median: floor(computeMeasureMedian(_.map(measures, measure => measure[key]))),
-    medianNormalized: floor(
-      computeMeasureMedian(_.map(measures, measure => normalizeMeasure(measure, key))),
-    ),
     min: floor(min),
     max: floor(max),
     values: _.map(measures, measure => ({
       exampleIndex: measure.exampleIndex,
       value: measure[key],
-      baseline: measure.baseline[key],
     })),
   }
 }
@@ -96,67 +75,41 @@ const sumByExample = (measures: ProfilerMeasureCycle[]): PerExamplePerfMeasures 
     {},
   )
 
-  return _.mapValues(perExampleMeasures, (profilerMeasures: ProfilerMeasureWithBaseline[]) => ({
+  return _.mapValues(perExampleMeasures, (profilerMeasures: ProfilerMeasure[]) => ({
     actualTime: reduceMeasures(profilerMeasures, 'actualTime'),
-    baseTime: reduceMeasures(profilerMeasures, 'baseTime'),
+    renderComponentTime: reduceMeasures(profilerMeasures, 'renderComponentTime'),
+    componentCount: reduceMeasures(profilerMeasures, 'componentCount'),
   }))
 }
 
-const getPercentDiff = (minValue: number, actualValue: number): number =>
-  _.round((actualValue / minValue) * 100 - 100, 2)
+const createMarkdownTable = (perExamplePerfMeasures: PerExamplePerfMeasures) => {
+  const fieldsMapping = {
+    min: 'actualTime.min',
+    avg: 'actualTime.avg',
+    median: 'actualTime.median',
+    max: 'actualTime.max',
+    'renderComponent.min': 'renderComponentTime.min',
+    'renderComponent.avg': 'renderComponentTime.avg',
+    'renderComponent.median': 'renderComponentTime.median',
+    'renderComponent.max': 'renderComponentTime.max',
+    components: 'componentCount.median',
+  }
 
-type NumberPropertyNames<T> = { [K in keyof T]: T[K] extends number ? K : never }[keyof T]
+  const fieldLabels = _.keys(fieldsMapping)
+  const fieldValues = _.map(perExamplePerfMeasures, (value, exampleName) => {
+    return [exampleName, ..._.map(_.values(fieldsMapping), measure => _.get(value, measure))]
+  })
 
-const createMarkdownTable = (
-  perExamplePerfMeasures: PerExamplePerfMeasures,
-  metricName: MeasuredValues = 'actualTime',
-  fields: NumberPropertyNames<ReducedMeasures>[] = [
-    'avg',
-    'avgNormalized',
-    'median',
-    'medianNormalized',
-  ],
-) => {
-  const exampleMeasures = _.mapValues(
-    perExamplePerfMeasures,
-    exampleMeasure => exampleMeasure[metricName],
-  )
-
-  const fieldLabels: string[] = _.flatMap(fields, field => [
-    _.startCase(field),
-    `${_.startCase(field)} diff`,
+  return markdownTable([
+    ['Example', ...fieldLabels],
+    ..._.sortBy(fieldValues, row => -row[fieldLabels.indexOf('median') + 1]), // +1 is for exampleName
   ])
-  const minFieldValues: Record<string, number> = _.zipObject(
-    fields,
-    _.map(fields, fieldName => _.min(_.map(exampleMeasures, fieldName))),
-  )
-  const fieldValues = _.mapValues(exampleMeasures, exampleMeasure =>
-    _.flatMap(fields, field => {
-      const minValue = minFieldValues[field]
-      const value = exampleMeasure[field]
-      const percentDiff =
-        minValue === value ? `**${value}**` : `+${getPercentDiff(minValue, value)}%`
-      return [value, percentDiff]
-    }),
-  )
-
-  return [
-    `| Example | ${fieldLabels.join(' | ')} |`,
-    `| --- | ${_.map(fieldLabels, () => ' --- ').join(' | ')} |`,
-    ..._.map(
-      exampleMeasures,
-      (exampleMeasure, exampleName) =>
-        `| ${exampleName} | ${fieldValues[exampleName].join(' | ')} |`,
-    ),
-  ].join('\n')
 }
 
-task('perf:clean', cb => {
-  rimraf(paths.perfDist(), cb)
-})
+task('perf:clean', () => del(paths.perfDist()))
 
 task('perf:build', cb => {
-  webpackPlugin(require('../../../build/webpack.config.perf').default, cb)
+  webpackPlugin(require('../../webpack.config.perf').default, cb)
 })
 
 task('perf:run', async () => {

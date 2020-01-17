@@ -1,6 +1,7 @@
 import * as _ from 'lodash'
-import { pxToRem } from '../../../../lib'
-import { ComponentSlotStylesPrepared, ICSSInJSStyle } from '../../../types'
+import { unstable_createAnimationStyles as createAnimationStyles } from '@fluentui/react-bindings'
+import { pxToRem } from '../../../../utils'
+import { ComponentSlotStylesPrepared, ICSSInJSStyle } from '@fluentui/styles'
 import Loader from '../../../../components/Loader/Loader'
 import { ButtonProps } from '../../../../components/Button/Button'
 import { ButtonVariables } from './buttonVariables'
@@ -8,14 +9,15 @@ import getBorderFocusStyles from '../../getBorderFocusStyles'
 import getIconFillOrOutlineStyles from '../../getIconFillOrOutlineStyles'
 
 const buttonStyles: ComponentSlotStylesPrepared<ButtonProps, ButtonVariables> = {
-  root: ({ props: p, variables: v, theme: { siteVariables } }): ICSSInJSStyle => {
+  root: ({ props: p, variables: v, theme }): ICSSInJSStyle => {
+    const { siteVariables } = theme
     const { borderWidth } = siteVariables
 
     const borderFocusStyles = getBorderFocusStyles({
       siteVariables,
+      borderPadding: borderWidth,
       ...(p.circular && {
-        borderRadius: v.circularBorderRadius,
-        focusOuterBorderColor: v.circularBorderColorFocus,
+        borderPadding: pxToRem(4),
       }),
     })
 
@@ -54,15 +56,26 @@ const buttonStyles: ComponentSlotStylesPrepared<ButtonProps, ButtonVariables> = 
           borderColor: v.borderColorHover,
         },
 
+        ':active': {
+          ...createAnimationStyles('scaleDownSoft', theme),
+          color: v.colorActive,
+          backgroundColor: v.backgroundColorActive,
+          borderColor: v.borderColorActive,
+          boxShadow: 'none',
+        },
+
         ':focus': {
           ...borderFocusStyles[':focus'],
-          boxShadow: 'none',
-          ':active': { backgroundColor: v.backgroundColorActive },
         },
+
         ':focus-visible': {
           ...borderFocusStyles[':focus-visible'],
-          color: v.colorFocus,
-          backgroundColor: v.backgroundColorFocus,
+          borderColor: v.borderColor,
+          borderWidth,
+
+          ':hover': {
+            borderColor: v.borderColorHover,
+          },
         },
 
         ...(p.size === 'small' && {
@@ -75,31 +88,11 @@ const buttonStyles: ComponentSlotStylesPrepared<ButtonProps, ButtonVariables> = 
         !p.text && {
           minWidth: v.height,
           padding: 0,
-          color: v.circularColor,
-          backgroundColor: v.circularBackgroundColor,
-          borderColor: v.circularBorderColor,
           borderRadius: v.circularBorderRadius,
 
           ...(p.size === 'small' && {
             minWidth: v.sizeSmallHeight,
           }),
-
-          ':hover': {
-            color: v.circularColorActive,
-            backgroundColor: v.circularBackgroundColorHover,
-            borderColor: v.circularBorderColorHover,
-          },
-
-          ':focus': {
-            ...borderFocusStyles[':focus'],
-            boxShadow: 'none',
-            ':active': { backgroundColor: v.circularBackgroundColorActive },
-          },
-          ':focus-visible': {
-            ...borderFocusStyles[':focus-visible'],
-            color: v.circularColorActive,
-            backgroundColor: v.circularBackgroundColorFocus,
-          },
         }),
 
       // text button defaults
@@ -121,6 +114,7 @@ const buttonStyles: ComponentSlotStylesPrepared<ButtonProps, ButtonVariables> = 
           boxShadow: 'none',
           ...borderFocusStyles[':focus'],
         },
+
         ':focus-visible': {
           ...borderFocusStyles[':focus-visible'],
           ...getIconFillOrOutlineStyles({ outline: false }),
@@ -137,36 +131,69 @@ const buttonStyles: ComponentSlotStylesPrepared<ButtonProps, ButtonVariables> = 
           color: v.primaryColor,
           backgroundColor: v.primaryBackgroundColor,
           borderColor: v.primaryBorderColor,
-          boxShadow: siteVariables.shadowLevel1Dark,
+          boxShadow: v.primaryBoxShadow,
+
+          ':active': {
+            ...createAnimationStyles('scaleDownSoft', theme),
+            backgroundColor: v.primaryBackgroundColorActive,
+            boxShadow: 'none',
+          },
+
+          ':focus': {
+            ...borderFocusStyles[':focus'],
+          },
+
+          ':focus-visible': {
+            ...borderFocusStyles[':focus-visible'],
+          },
 
           ':hover': {
             color: v.primaryColorHover,
             backgroundColor: v.primaryBackgroundColorHover,
           },
-
-          ':focus': {
-            ...borderFocusStyles[':focus'],
-            boxShadow: 'none',
-            ':active': { backgroundColor: v.primaryBackgroundColorActive },
-          },
-          ':focus-visible': {
-            ...borderFocusStyles[':focus-visible'],
-            color: v.primaryColorFocus,
-            backgroundColor: v.primaryBackgroundColorFocus,
-          },
         }),
+
+      ...(p.inverted && {
+        backgroundColor: siteVariables.colorScheme.silver.background,
+        borderColor: siteVariables.colorScheme.silver.border,
+        color: siteVariables.colorScheme.silver.foreground,
+
+        ':active': {
+          ...createAnimationStyles('scaleDownSoft', theme),
+          backgroundColor: siteVariables.colorScheme.silver.backgroundPressed,
+          color: siteVariables.colorScheme.silver.foregroundHover,
+        },
+
+        ':hover': {
+          backgroundColor: siteVariables.colorScheme.silver.backgroundHover,
+          color: siteVariables.colorScheme.silver.foregroundHover,
+        },
+
+        ':focus': {
+          ...borderFocusStyles[':focus'],
+          boxShadow: 'none',
+        },
+
+        ':focus-visible': {
+          ...borderFocusStyles[':focus-visible'],
+          backgroundColor: siteVariables.colorScheme.silver.backgroundPressed,
+          color: siteVariables.colorScheme.silver.foregroundHover,
+        },
+      }),
 
       // Overrides for "disabled" buttons
       ...(p.disabled && {
         cursor: 'default',
         color: v.colorDisabled,
         boxShadow: 'none',
+        pointerEvents: 'none',
         ':hover': {
           color: v.colorDisabled,
         },
 
         ...(p.text && {
           color: v.textColorDisabled,
+          backgroundColor: 'transparent',
           ':hover': {
             color: v.textColorDisabled,
           },
@@ -175,9 +202,6 @@ const buttonStyles: ComponentSlotStylesPrepared<ButtonProps, ButtonVariables> = 
         ...(!p.text && {
           backgroundColor: v.backgroundColorDisabled,
           borderColor: v.borderColorDisabled,
-          ':hover': {
-            backgroundColor: v.backgroundColorDisabled,
-          },
         }),
       }),
 

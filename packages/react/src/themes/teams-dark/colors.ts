@@ -27,6 +27,7 @@ export const colorScheme: ColorSchemeMapping = {
 
     foregroundHover: colors.white,
     foregroundHover1: colors.white,
+    foregroundHover2: colors.white,
 
     backgroundHover: colors.grey[550],
     backgroundHover1: colors.grey[550],
@@ -247,7 +248,10 @@ export const colorScheme: ColorSchemeMapping = {
   silver: createColorScheme({
     foreground: colors.white,
     foreground1: colors.silver[200],
+    foregroundHover: colors.white,
+    foregroundPressed: colors.white,
     border: colors.silver[600],
+    background: 'transparent',
     backgroundHover: colors.silver[800],
     borderHover: colors.silver[600],
     backgroundPressed: colors.silver[700],
@@ -261,6 +265,7 @@ export const colorScheme: ColorSchemeMapping = {
     background2: colors.onyx[500],
     border: colors.onyx[800],
     border1: 'transparent',
+    border2: colors.silver[400],
   }),
   amethyst: createColorScheme({
     background: colors.onyx[200],
@@ -307,4 +312,23 @@ export const categoryColorScheme: TeamsCategoryColorSchemeMapping = {
   smokeLight: createCategoryColorScheme('smokeLight'),
   steelDark: createCategoryColorScheme('steelDark'),
   steelLight: createCategoryColorScheme('steelLight'),
+  neon: createCategoryColorScheme('neon'),
+  formatting: {
+    foreground1: categoryColors.red[250],
+    background1: categoryColors.red[700],
+    foreground2: categoryColors.orangeDark[350],
+    background2: categoryColors.orange[700],
+    foreground3: categoryColors.yellow[250],
+    background3: categoryColors.yellow[800],
+    foreground4: categoryColors.neon[150],
+    background4: categoryColors.neon[800],
+    foreground5: categoryColors.green[250],
+    background5: categoryColors.green[700],
+    foreground6: categoryColors.tealLight[250],
+    background6: categoryColors.tealLight[700],
+    foreground7: categoryColors.blueDark[250],
+    background7: categoryColors.blueDark[450],
+    foreground8: categoryColors.maroon[350],
+    background8: categoryColors.maroon[800],
+  },
 }

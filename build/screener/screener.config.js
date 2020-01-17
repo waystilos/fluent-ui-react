@@ -1,7 +1,7 @@
-require('@stardust-ui/internal-tooling/babel/register')
+require('@fluentui/internal-tooling/babel/register')
 
-const config = require('../../config').default
-const { compilerOptions } = require('../../build/tsconfig.docs.json')
+const config = require('../config').default
+const { compilerOptions } = require('../tsconfig.docs.json')
 
 require('tsconfig-paths').register({
   baseUrl: config.path_base,
@@ -10,7 +10,7 @@ require('tsconfig-paths').register({
 
 // https://github.com/screener-io/screener-runner
 module.exports = {
-  projectRepo: 'stardust-ui/react',
+  projectRepo: 'microsoft/fluent-ui-react',
 
   apiKey: process.env.SCREENER_API_KEY,
 
@@ -36,6 +36,12 @@ module.exports = {
 
   ...(process.env.CI && {
     baseBranch: 'master',
-    failureExitCode: 0,
+    // Disable exit code to fail in Github Actions
+    // failureExitCode: 0,
+    // GITHUB_REF can be:
+    // - refs/heads/feature-branch-1 for "push"
+    // - refs/pull/2040/merge for "pull_request"
+    branch: process.env.GITHUB_REF.split('/')[2],
+    commit: process.env.GITHUB_SHA,
   }),
 }

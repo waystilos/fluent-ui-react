@@ -1,8 +1,14 @@
-import { Ref } from '@stardust-ui/react-component-ref'
+import {
+  FocusTrapZone,
+  FocusTrapZoneProps,
+  AutoFocusZoneProps,
+  AutoFocusZone,
+} from '@fluentui/react-bindings'
+import cx from 'classnames'
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import * as _ from 'lodash'
-import * as customPropTypes from '@stardust-ui/react-proptypes'
+import * as customPropTypes from '@fluentui/react-proptypes'
 
 import {
   childrenExist,
@@ -15,17 +21,10 @@ import {
   commonPropTypes,
   rtlTextContainer,
   ShorthandFactory,
-} from '../../lib'
-import { Accessibility } from '@stardust-ui/accessibility'
-import {
-  FocusTrapZone,
-  FocusTrapZoneProps,
-  AutoFocusZoneProps,
-  AutoFocusZone,
-} from '../../lib/accessibility/FocusZone'
-import { PopperChildrenProps } from '../../lib/positioner'
+} from '../../utils'
+import { Accessibility } from '@fluentui/accessibility'
+import { PopperChildrenProps } from '../../utils/positioner'
 import { WithAsProp, ComponentEventHandler, withSafeTypeForAs } from '../../types'
-import Box from '../Box/Box'
 
 export interface PopupContentSlotClassNames {
   content: string
@@ -40,15 +39,15 @@ export interface PopupContentProps
 
   /**
    * Called after user's mouse enter.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props.
    */
   onMouseEnter?: ComponentEventHandler<PopupContentProps>
 
   /**
    * Called after user's mouse leave.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props.
    */
   onMouseLeave?: ComponentEventHandler<PopupContentProps>
 
@@ -59,7 +58,7 @@ export interface PopupContentProps
   pointing?: boolean
 
   /** A ref to a pointer element. */
-  pointerRef?: React.Ref<Element>
+  pointerRef?: React.Ref<HTMLDivElement>
 
   /** Controls whether or not focus trap should be applied, using boolean or FocusTrapZoneProps type value. */
   trapFocus?: boolean | FocusTrapZoneProps
@@ -114,21 +113,10 @@ class PopupContent extends UIComponent<WithAsProp<PopupContentProps>> {
 
     const popupContent = (
       <>
-        {pointing && (
-          <Ref innerRef={pointerRef}>
-            {Box.create({}, { defaultProps: { styles: styles.pointer } })}
-          </Ref>
-        )}
-        {Box.create(
-          {},
-          {
-            defaultProps: {
-              className: PopupContent.slotClassNames.content,
-              children: childrenExist(children) ? children : content,
-              styles: styles.content,
-            },
-          },
-        )}
+        {pointing && <div className={classes.pointer} ref={pointerRef} />}
+        <div className={cx(PopupContent.slotClassNames.content, classes.content)}>
+          {childrenExist(children) ? children : content}
+        </div>
       </>
     )
 

@@ -1,5 +1,5 @@
 import { DialogProps } from '../../../../components/Dialog/Dialog'
-import { ComponentStyleFunctionParam, ICSSInJSStyle } from '../../../types'
+import { ComponentStyleFunctionParam, ICSSInJSStyle } from '@fluentui/styles'
 import { DialogVariables } from './dialogVariables'
 
 type DialogStyleParams = ComponentStyleFunctionParam<DialogProps, DialogVariables>
@@ -18,11 +18,13 @@ export default {
     color: v.foregroundColor,
   }),
 
-  actions: (): ICSSInJSStyle => ({
+  footer: (): ICSSInJSStyle => ({
+    gridColumn: '1 / -1',
     gridRow: 3,
-    gridColumn: '1 / span 2',
-    '-ms-grid-column-align': 'end',
-    justifySelf: 'right',
+  }),
+
+  actions: (): ICSSInJSStyle => ({
+    display: 'inline-block',
   }),
 
   content: ({ variables: v }: DialogStyleParams): ICSSInJSStyle => ({
@@ -30,6 +32,7 @@ export default {
     gridColumn: '1 / span 2',
     gridRow: 2,
     justifySelf: 'left',
+    width: '100%',
   }),
 
   header: ({ variables: v }: DialogStyleParams): ICSSInJSStyle => ({

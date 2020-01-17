@@ -1,9 +1,9 @@
-import { Accessibility, iconBehavior } from '@stardust-ui/accessibility'
-import * as customPropTypes from '@stardust-ui/react-proptypes'
+import { Accessibility, iconBehavior } from '@fluentui/accessibility'
+import { callable } from '@fluentui/styles'
+import * as customPropTypes from '@fluentui/react-proptypes'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import {
-  callable,
   UIComponent,
   createShorthandFactory,
   UIComponentProps,
@@ -11,7 +11,7 @@ import {
   ColorComponentProps,
   SizeValue,
   ShorthandFactory,
-} from '../../lib'
+} from '../../utils'
 import { WithAsProp, withSafeTypeForAs } from '../../types'
 
 export type IconXSpacing = 'none' | 'before' | 'after' | 'both'

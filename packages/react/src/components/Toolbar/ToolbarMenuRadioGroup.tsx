@@ -1,4 +1,4 @@
-import * as customPropTypes from '@stardust-ui/react-proptypes'
+import * as customPropTypes from '@fluentui/react-proptypes'
 import * as _ from 'lodash'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
@@ -12,7 +12,7 @@ import {
   ShorthandFactory,
   applyAccessibilityKeyHandlers,
   UIComponent,
-} from '../../lib'
+} from '../../utils'
 import {
   ComponentEventHandler,
   ShorthandCollection,
@@ -24,9 +24,9 @@ import {
   Accessibility,
   toolbarMenuRadioGroupBehavior,
   toolbarMenuItemRadioBehavior,
-} from '@stardust-ui/accessibility'
+} from '@fluentui/accessibility'
 import ToolbarMenuItem, { ToolbarMenuItemProps } from './ToolbarMenuItem'
-import { mergeComponentVariables } from '../../lib/mergeThemes'
+import { mergeComponentVariables } from '@fluentui/styles'
 import Box, { BoxProps } from '../Box/Box'
 
 export interface ToolbarMenuRadioGroupProps
@@ -47,8 +47,8 @@ export interface ToolbarMenuRadioGroupProps
   /**
    * Called on item click.
    *
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All item props.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All item props.
    */
   onItemClick?: ComponentEventHandler<ToolbarMenuItemProps>
 
@@ -108,12 +108,12 @@ class ToolbarMenuRadioGroup extends UIComponent<WithAsProp<ToolbarMenuRadioGroup
       >
         {_.map(items, (item, index) =>
           ToolbarMenuItem.create(item, {
-            defaultProps: {
+            defaultProps: () => ({
               accessibility: toolbarMenuItemRadioBehavior,
               as: 'li',
               active: activeIndex === index,
               index,
-            },
+            }),
             overrideProps: this.handleItemOverrides(variables),
           }),
         )}
@@ -121,13 +121,13 @@ class ToolbarMenuRadioGroup extends UIComponent<WithAsProp<ToolbarMenuRadioGroup
     )
 
     return Box.create(wrapper, {
-      defaultProps: {
+      defaultProps: () => ({
         as: 'li',
         className: ToolbarMenuRadioGroup.slotClassNames.wrapper,
         styles: styles.wrapper,
         ...accessibility.attributes.wrapper,
         ...applyAccessibilityKeyHandlers(accessibility.keyHandlers.wrapper, wrapper),
-      },
+      }),
       overrideProps: {
         children: content,
       },

@@ -1,9 +1,9 @@
 import * as _ from 'lodash'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
-import { Icon, HierarchicalTree } from '@stardust-ui/react'
+import { Icon, HierarchicalTree } from '@fluentui/react'
 
-import { examplePathToHash } from 'docs/src/utils'
+import { examplePathToHash } from '../../../utils'
 
 export default class ComponentSidebarSection extends React.PureComponent<any, any> {
   static propTypes = {

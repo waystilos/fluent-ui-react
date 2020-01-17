@@ -1,18 +1,19 @@
-import { useSelectKnob, useStringKnob } from '@stardust-ui/docs-components'
+import { useSelectKnob, useStringKnob } from '@fluentui/docs-components'
 import {
   AvatarProps,
   BoxProps,
+  DialogProps,
   DividerProps,
   EmbedProps,
   IconProps,
   ImageProps,
   VideoProps,
-} from '@stardust-ui/react'
+} from '@fluentui/react'
 import * as _ from 'lodash'
 import * as faker from 'faker'
 
-import { KnobComponentGenerators } from 'docs/src/types'
-import { number } from 'docs/src/components/ComponentPlayground/typeGenerators'
+import { KnobComponentGenerators } from '../../types'
+import { number } from '../ComponentPlayground/typeGenerators'
 
 export const Avatar: KnobComponentGenerators<AvatarProps> = {
   name: ({ propName }) => ({
@@ -25,6 +26,10 @@ export const Avatar: KnobComponentGenerators<AvatarProps> = {
 export const Box: KnobComponentGenerators<BoxProps> = {
   // TODO: fix support for boxes
   children: () => null,
+}
+
+export const Dialog: KnobComponentGenerators<DialogProps> = {
+  footer: () => null,
 }
 
 export const Divider: KnobComponentGenerators<DividerProps> = {

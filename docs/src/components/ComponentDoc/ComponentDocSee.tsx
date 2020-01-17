@@ -2,9 +2,9 @@ import * as _ from 'lodash'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { List, Header } from '@stardust-ui/react'
+import { List, Header } from '@fluentui/react'
 
-import { getComponentPathname, getInfoForSeeTags } from 'docs/src/utils'
+import { getComponentPathname, getInfoForSeeTags } from '../../utils'
 
 const listStyle = { display: 'block' }
 

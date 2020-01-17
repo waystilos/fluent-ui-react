@@ -1,5 +1,5 @@
-import { Accessibility, attachmentBehavior } from '@stardust-ui/accessibility'
-import * as customPropTypes from '@stardust-ui/react-proptypes'
+import { Accessibility, attachmentBehavior } from '@fluentui/accessibility'
+import * as customPropTypes from '@fluentui/react-proptypes'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import * as _ from 'lodash'
@@ -10,12 +10,11 @@ import {
   commonPropTypes,
   applyAccessibilityKeyHandlers,
   ShorthandFactory,
-} from '../../lib'
+} from '../../utils'
 import Icon, { IconProps } from '../Icon/Icon'
 import Button, { ButtonProps } from '../Button/Button'
 import Text, { TextProps } from '../Text/Text'
-import Box from '../Box/Box'
-import { UIComponentProps, ChildrenComponentProps } from '../../lib/commonPropInterfaces'
+import { UIComponentProps, ChildrenComponentProps } from '../../utils/commonPropInterfaces'
 
 export interface AttachmentProps extends UIComponentProps, ChildrenComponentProps {
   /** Accessibility behavior if overridden by the user. */
@@ -30,7 +29,7 @@ export interface AttachmentProps extends UIComponentProps, ChildrenComponentProp
   /** A string describing the attachment. */
   description?: ShorthandValue<TextProps>
 
-  /** An attachment can show it is currently unable to be interacted with. */
+  /** An attachment can show that it cannot be interacted with. */
   disabled?: boolean
 
   /** The name of the attachment. */
@@ -44,8 +43,8 @@ export interface AttachmentProps extends UIComponentProps, ChildrenComponentProp
 
   /**
    * Called after user's click.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props.
    */
   onClick?: ComponentEventHandler<AttachmentProps>
 }
@@ -92,32 +91,29 @@ class Attachment extends UIComponent<WithAsProp<AttachmentProps>> {
       >
         {icon &&
           Icon.create(icon, {
-            defaultProps: { size: 'larger', styles: styles.icon },
+            defaultProps: () => ({ size: 'larger', styles: styles.icon }),
           })}
         {(header || description) && (
           <div className={classes.content}>
             {Text.create(header, {
-              defaultProps: { styles: styles.header },
+              defaultProps: () => ({ styles: styles.header }),
             })}
 
             {Text.create(description, {
-              defaultProps: { styles: styles.description },
+              defaultProps: () => ({ styles: styles.description }),
             })}
           </div>
         )}
         {action &&
           Button.create(action, {
-            defaultProps: {
+            defaultProps: () => ({
               iconOnly: true,
               text: true,
               styles: styles.action,
               className: Attachment.slotClassNames.action,
-            },
+            }),
           })}
-        {!_.isNil(progress) &&
-          Box.create('', {
-            defaultProps: { styles: styles.progress },
-          })}
+        {!_.isNil(progress) && <div className={classes.progress} />}
       </ElementType>
     )
   }

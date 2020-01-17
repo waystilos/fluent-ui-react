@@ -1,5 +1,5 @@
-import { Accessibility } from '@stardust-ui/accessibility'
-import * as customPropTypes from '@stardust-ui/react-proptypes'
+import { Accessibility } from '@fluentui/accessibility'
+import * as customPropTypes from '@fluentui/react-proptypes'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 
@@ -11,7 +11,7 @@ import {
   ChildrenComponentProps,
   commonPropTypes,
   ShorthandFactory,
-} from '../../lib'
+} from '../../utils'
 
 import { WithAsProp, ShorthandValue, withSafeTypeForAs } from '../../types'
 import Text, { TextProps } from '../Text/Text'
@@ -85,21 +85,21 @@ class FormField extends UIComponent<WithAsProp<FormFieldProps>, any> {
     const { children, control, id, label, message, name, required, type } = this.props
 
     const labelElement = Text.create(label, {
-      defaultProps: {
+      defaultProps: () => ({
         as: 'label',
         htmlFor: id,
         styles: styles.label,
-      },
+      }),
     })
 
     const messageElement = Text.create(message, {
-      defaultProps: {
+      defaultProps: () => ({
         styles: styles.message,
-      },
+      }),
     })
 
     const controlElement = Box.create(control || {}, {
-      defaultProps: { required, id, name, type, styles: styles.control },
+      defaultProps: () => ({ required, id, name, type, styles: styles.control }),
     })
 
     const content = (

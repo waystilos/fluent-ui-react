@@ -1,4 +1,4 @@
-import { ComponentSlotStylesPrepared, ICSSInJSStyle } from '../../../types'
+import { ComponentSlotStylesPrepared, ICSSInJSStyle } from '@fluentui/styles'
 import * as _ from 'lodash'
 import {
   default as ChatMessage,
@@ -6,8 +6,8 @@ import {
   ChatMessageState,
 } from '../../../../components/Chat/ChatMessage'
 import { ChatMessageVariables } from './chatMessageVariables'
-import { screenReaderContainerStyles } from '../../../../lib/accessibility/Styles/accessibilityStyles'
-import { pxToRem } from '../../../../lib'
+import { screenReaderContainerStyles } from '../../../../utils/accessibility/Styles/accessibilityStyles'
+import { pxToRem } from '../../../../utils'
 import getBorderFocusStyles from '../../getBorderFocusStyles'
 
 const chatMessageStyles: ComponentSlotStylesPrepared<
@@ -62,6 +62,10 @@ const chatMessageStyles: ComponentSlotStylesPrepared<
         [`> .${ChatMessage.slotClassNames.actionMenu}`]: {
           opacity: 1,
           width: 'auto',
+
+          '[x-out-of-boundaries]': {
+            opacity: 0,
+          },
         },
       },
     }),
@@ -84,6 +88,8 @@ const chatMessageStyles: ComponentSlotStylesPrepared<
 
   actionMenu: ({ props: p, variables: v }): ICSSInJSStyle => ({
     backgroundColor: v.backgroundColor,
+    border: '1px solid',
+    borderColor: v.reactionGroupBorderColor,
     borderRadius: v.borderRadius,
     boxShadow: v.actionMenuBoxShadow,
     // we need higher zIndex for the action menu in order to be displayed above the focus border of the chat message
@@ -103,9 +109,14 @@ const chatMessageStyles: ComponentSlotStylesPrepared<
       opacity: v.showActionMenu ? 1 : 0,
       width: v.showActionMenu ? 'auto' : 0,
     }),
+
+    '[x-out-of-boundaries]': {
+      opacity: 0,
+    },
   }),
   author: ({ props: p, variables: v }): ICSSInJSStyle => ({
-    ...((p.mine || p.attached === 'bottom' || p.attached === true) && screenReaderContainerStyles),
+    ...((p.mine || p.attached === 'bottom' || p.attached === true) &&
+      (screenReaderContainerStyles as ICSSInJSStyle)),
     color: v.authorColor,
     marginRight: v.authorMarginRight,
     marginBottom: v.headerMarginBottom,
@@ -119,7 +130,7 @@ const chatMessageStyles: ComponentSlotStylesPrepared<
     }),
     ...((p.attached === 'bottom' || p.attached === true) &&
       !p.reactionGroup &&
-      screenReaderContainerStyles),
+      (screenReaderContainerStyles as ICSSInJSStyle)),
   }),
 
   content: ({ props: p, variables: v }): ICSSInJSStyle => ({

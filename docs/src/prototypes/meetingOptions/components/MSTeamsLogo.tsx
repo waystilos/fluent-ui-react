@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { Provider, Text, Icon, IconProps } from '@stardust-ui/react'
-import { ShorthandValue } from 'src/types'
+import { Provider, Text, Icon, IconProps, ShorthandValue } from '@fluentui/react'
 
 export interface LogoProps {
   companyName?: string
@@ -17,12 +16,12 @@ class MSTeamsLogo extends React.Component<LogoProps, any> {
           return (
             <div style={style}>
               {Icon.create(icon, {
-                defaultProps: {
+                defaultProps: () => ({
                   variables: { color: siteVariables.colors.brand[600] },
                   size: 'largest',
                   xSpacing: 'after',
                   styles: { verticalAlign: 'middle' },
-                },
+                }),
               })}
               <Text
                 styles={{

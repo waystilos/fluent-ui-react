@@ -1,8 +1,8 @@
 import * as React from 'react'
 
-import ComponentBestPractices from 'docs/src/components/ComponentBestPractices'
+import ComponentBestPractices from '../../../../components/ComponentBestPractices'
 import { code, link } from '../../../../utils/helpers'
-import { Text } from '@stardust-ui/react'
+import { Text } from '@fluentui/react'
 
 const doList = [
   <Text>

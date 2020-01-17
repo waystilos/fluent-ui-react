@@ -68,6 +68,7 @@ export const colorScheme: ColorSchemeMapping = {
 
     foregroundHover: colors.black,
     foregroundHover1: colors.black,
+    foregroundHover2: accessibleCyan,
 
     backgroundHover: accessibleYellow,
     backgroundHover1: accessibleYellow,
@@ -226,7 +227,7 @@ export const colorScheme: ColorSchemeMapping = {
     foreground2: colors.black,
 
     background: colors.white,
-    background1: colors.white,
+    background1: colors.black,
     background2: colors.black,
     background3: accessibleYellow,
 
@@ -248,11 +249,13 @@ export const colorScheme: ColorSchemeMapping = {
   silver: createEmptyColorScheme({
     foreground: colors.white,
     foreground1: colors.white,
+    foregroundHover: colors.black,
+    foregroundPressed: colors.black,
     background: colors.black,
     border: colors.white,
-    backgroundHover: colors.black,
+    backgroundHover: accessibleCyan,
     borderHover: colors.white,
-    backgroundPressed: colors.black,
+    backgroundPressed: accessibleCyan,
     borderPressed: colors.white,
     foregroundDisabled: accessibleGreen,
     backgroundDisabled: colors.black,
@@ -264,6 +267,7 @@ export const colorScheme: ColorSchemeMapping = {
     background2: colors.white,
     border: colors.white,
     border1: colors.white,
+    border2: colors.white,
   }),
   amethyst: createEmptyColorScheme({
     background: colors.silver[900],
@@ -308,4 +312,23 @@ export const categoryColorScheme: TeamsCategoryColorSchemeMapping = {
   smokeLight: createCategoryColorScheme(),
   steelDark: createCategoryColorScheme(),
   steelLight: createCategoryColorScheme(),
+  neon: createCategoryColorScheme(),
+  formatting: {
+    foreground1: undefined,
+    background1: undefined,
+    foreground2: undefined,
+    background2: undefined,
+    foreground3: undefined,
+    background3: undefined,
+    foreground4: undefined,
+    background4: undefined,
+    foreground5: undefined,
+    background5: undefined,
+    foreground6: undefined,
+    background6: undefined,
+    foreground7: undefined,
+    background7: undefined,
+    foreground8: undefined,
+    background8: undefined,
+  },
 }

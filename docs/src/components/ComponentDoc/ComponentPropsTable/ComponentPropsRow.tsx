@@ -2,10 +2,10 @@ import * as React from 'react'
 import * as _ from 'lodash'
 import { Link } from 'react-router-dom'
 
-import { ComponentProp, ComponentPropType } from 'docs/src/types'
-import componentInfoContext from 'docs/src/utils/componentInfoContext'
+import { ComponentProp, ComponentPropType } from '../../../types'
+import componentInfoContext from '../../../utils/componentInfoContext'
 import ComponentPropName from '../ComponentProp/ComponentPropName'
-import { getComponentGroup } from 'docs/src/utils'
+import { getComponentGroup } from '../../../utils'
 
 const InlineMarkdown = React.lazy(() => import('../InlineMarkdown'))
 
@@ -75,7 +75,7 @@ const ComponentPropsRow: React.FunctionComponent<ComponentPropsRowProps> = props
             {type.value}
           </code>
         ))}
-        {/* TODO change these according to the react-docgen-typescript generated json */}
+        {/* TODO make this work with typescript types */}
         {/* <ComponentPropFunctionSignature name={name} tags={tags} /> */}
       </td>
     </tr>

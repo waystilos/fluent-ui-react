@@ -1,0 +1,6 @@
+{
+  "extends": ["../../build/eslint/index.js"],
+  "rules": {
+    "semi": ["error", "always"]
+  }
+}

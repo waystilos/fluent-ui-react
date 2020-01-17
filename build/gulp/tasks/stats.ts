@@ -1,17 +1,15 @@
 import fs from 'fs'
 import { task, parallel, series } from 'gulp'
+import { log, PluginError } from 'gulp-util'
 import _ from 'lodash'
 import webpack from 'webpack'
 import stableStringify from 'json-stable-stringify-without-jsonify'
 import { argv } from 'yargs'
 import requestHttp from 'request-promise-native'
 
-import config from '../../../config'
-
-const g = require('gulp-load-plugins')()
+import config from '../../config'
 
 const { paths } = config
-const { log, PluginError } = g.util
 
 const UNRELEASED_VERSION_STRING = 'Unreleased'
 const SEMVER_MATCHER = /(\d+)\.(\d+)\.(\d+)/
@@ -139,9 +137,40 @@ function readSummaryPerfStats() {
     .mapKeys((value, key) => _.camelCase(key)) // mongodb does not allow dots in keys
     .mapValues(result => ({
       actualTime: _.omit(result.actualTime, 'values'),
-      baseTime: _.omit(result.baseTime, 'values'),
+      renderComponentTime: {
+        ..._.omit(result.renderComponentTime, 'values'),
+        componentCount: result.componentCount.median,
+      },
     }))
     .value()
+}
+
+function readFlamegrillStats() {
+  return require(paths.packageDist('perf-test', 'perfCounts.json'))
+}
+
+// 1. iterate over all perf-test results
+// 2. the ones which have filename are docsite perf examples
+//    -> use camelCase name (docsite perf examples convention)
+//    -> and merge yarn perf (summaryPerf) and yarn perf:test (flamegrill) data
+// 3. the others are perf-test only examples -> store
+function mergePerfStats(summaryPerfStats, perfTestStats) {
+  return _.transform(
+    perfTestStats,
+    (result, value, key: string) => {
+      const flamegrill = _.pick(value, ['profile.metrics', 'analysis', 'extended'])
+      if (value['extended'].filename) {
+        const docsiteFilename = _.camelCase(value['extended'].filename)
+        result[docsiteFilename] = {
+          ...summaryPerfStats[docsiteFilename],
+          flamegrill,
+        }
+      } else {
+        result[key.replace(/\./g, '_')] = { flamegrill } // mongodb does not allow dots in keys
+      }
+    },
+    {},
+  )
 }
 
 function readCurrentBundleStats() {
@@ -149,21 +178,32 @@ function readCurrentBundleStats() {
 }
 
 task('stats:save', async () => {
+  if (!process.env.STATS_URI) {
+    throw 'Cannot save stats because STATS_URI is not set'
+  }
+
   const commandLineArgs = _.pickBy(
     _.pick(argv, ['sha', 'branch', 'tag', 'pr', 'build']),
     val => val !== '', // ignore empty strings
   )
   const bundleStats = readCurrentBundleStats()
   const perfStats = readSummaryPerfStats()
+  const flamegrillStats = readFlamegrillStats()
+
+  const mergedPerfStats = mergePerfStats(perfStats, flamegrillStats)
+
+  const prUrl =
+    process.env.CIRCLE_PULL_REQUEST ||
+    `${process.env.SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI}/pull/${process.env.SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}`
 
   const statsPayload = {
-    sha: process.env.CIRCLE_SHA1,
-    branch: process.env.CIRCLE_BRANCH,
-    pr: process.env.CIRCLE_PULL_REQUEST, // optional
-    build: process.env.CIRCLE_BUILD_NUM,
+    sha: process.env.BUILD_SOURCEVERSION || process.env.CIRCLE_SHA1,
+    branch: process.env.BUILD_SOURCEBRANCHNAME || process.env.CIRCLE_BRANCH,
+    pr: prUrl, // optional
+    build: process.env.BUILD_BUILDID || process.env.CIRCLE_BUILD_NUM,
     ...commandLineArgs, // allow command line overwrites
     bundleSize: bundleStats,
-    performance: perfStats,
+    performance: mergedPerfStats,
     ts: new Date(),
   }
 

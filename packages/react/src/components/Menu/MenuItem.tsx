@@ -1,7 +1,8 @@
-import { Accessibility, menuItemBehavior, submenuBehavior } from '@stardust-ui/accessibility'
-import { EventListener } from '@stardust-ui/react-component-event-listener'
-import { Ref, toRefObject } from '@stardust-ui/react-component-ref'
-import * as customPropTypes from '@stardust-ui/react-proptypes'
+import { Accessibility, menuItemBehavior, submenuBehavior } from '@fluentui/accessibility'
+import { focusAsync } from '@fluentui/react-bindings'
+import { EventListener } from '@fluentui/react-component-event-listener'
+import { Ref, toRefObject } from '@fluentui/react-component-ref'
+import * as customPropTypes from '@fluentui/react-proptypes'
 import * as _ from 'lodash'
 import cx from 'classnames'
 import * as PropTypes from 'prop-types'
@@ -19,7 +20,7 @@ import {
   isFromKeyboard,
   applyAccessibilityKeyHandlers,
   ShorthandFactory,
-} from '../../lib'
+} from '../../utils'
 import Icon, { IconProps } from '../Icon/Icon'
 import Menu, { MenuProps, MenuShorthandKinds } from './Menu'
 import Box, { BoxProps } from '../Box/Box'
@@ -30,8 +31,7 @@ import {
   ShorthandCollection,
   withSafeTypeForAs,
 } from '../../types'
-import { focusAsync } from '../../lib/accessibility/FocusZone'
-import { Popper } from '../../lib/positioner'
+import { Popper } from '../../utils/positioner'
 
 export interface MenuItemSlotClassNames {
   wrapper: string
@@ -72,22 +72,22 @@ export interface MenuItemProps
   /**
    * Called on click.
    *
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props.
    */
   onClick?: ComponentEventHandler<MenuItemProps>
 
   /**
    * Called after user's focus.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props.
    */
   onFocus?: ComponentEventHandler<MenuItemProps>
 
   /**
    * Called after item blur.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props.
    */
   onBlur?: ComponentEventHandler<MenuItemProps>
 
@@ -135,8 +135,8 @@ export interface MenuItemProps
 
   /**
    * Event for request to change 'open' value.
-   * @param {SyntheticEvent} event - React's original SyntheticEvent.
-   * @param {object} data - All props and proposed value.
+   * @param event - React's original SyntheticEvent.
+   * @param data - All props and proposed value.
    */
   onMenuOpenChange?: ComponentEventHandler<MenuItemProps>
 }
@@ -182,7 +182,7 @@ class MenuItem extends AutoControlledComponent<WithAsProp<MenuItemProps>, MenuIt
     defaultMenuOpen: PropTypes.bool,
     onActiveChanged: PropTypes.func,
     inSubmenu: PropTypes.bool,
-    indicator: customPropTypes.itemShorthand,
+    indicator: customPropTypes.itemShorthandWithoutJSX,
     onMenuOpenChange: PropTypes.func,
   }
 
@@ -213,7 +213,7 @@ class MenuItem extends AutoControlledComponent<WithAsProp<MenuItemProps>, MenuIt
     } = this.props
     const { menuOpen } = this.state
 
-    const defaultIndicator = { name: vertical ? 'stardust-arrow-end' : 'stardust-arrow-down' }
+    const defaultIndicator = { name: vertical ? 'icon-arrow-end' : 'icon-arrow-down' }
     const indicatorWithDefaults = indicator === undefined ? defaultIndicator : indicator
     const targetRef = toRefObject(this.context.target)
 
@@ -232,22 +232,21 @@ class MenuItem extends AutoControlledComponent<WithAsProp<MenuItemProps>, MenuIt
           {...(!wrapper && { onClick: this.handleClick })}
           {...applyAccessibilityKeyHandlers(accessibility.keyHandlers.root, unhandledProps)}
         >
-          {icon &&
-            Icon.create(this.props.icon, {
-              defaultProps: {
-                xSpacing: !!content ? 'after' : 'none',
-                styles: styles.icon,
-              },
-            })}
+          {Icon.create(icon, {
+            defaultProps: () => ({
+              xSpacing: !!content ? 'after' : 'none',
+              styles: styles.icon,
+            }),
+          })}
           {Box.create(content, {
-            defaultProps: { as: 'span', styles: styles.content },
+            defaultProps: () => ({ as: 'span', styles: styles.content }),
           })}
           {menu &&
             Icon.create(indicatorWithDefaults, {
-              defaultProps: {
-                name: vertical ? 'stardust-menu-arrow-end' : 'stardust-menu-arrow-down',
+              defaultProps: () => ({
+                name: vertical ? 'icon-menu-arrow-end' : 'icon-menu-arrow-down',
                 styles: styles.indicator,
-              },
+              }),
             })}
         </ElementType>
       </Ref>
@@ -262,7 +261,7 @@ class MenuItem extends AutoControlledComponent<WithAsProp<MenuItemProps>, MenuIt
               targetRef={this.itemRef}
             >
               {Menu.create(menu, {
-                defaultProps: {
+                defaultProps: () => ({
                   accessibility: submenuBehavior,
                   className: MenuItem.slotClassNames.submenu,
                   vertical: true,
@@ -271,7 +270,7 @@ class MenuItem extends AutoControlledComponent<WithAsProp<MenuItemProps>, MenuIt
                   styles: styles.menu,
                   submenu: true,
                   indicator,
-                },
+                }),
               })}
             </Popper>
           </Ref>
@@ -281,11 +280,11 @@ class MenuItem extends AutoControlledComponent<WithAsProp<MenuItemProps>, MenuIt
 
     if (wrapper) {
       return Box.create(wrapper, {
-        defaultProps: {
+        defaultProps: () => ({
           className: cx(MenuItem.slotClassNames.wrapper, classes.wrapper),
           ...accessibility.attributes.wrapper,
           ...applyAccessibilityKeyHandlers(accessibility.keyHandlers.wrapper, wrapper),
-        },
+        }),
         overrideProps: () => ({
           children: (
             <>
