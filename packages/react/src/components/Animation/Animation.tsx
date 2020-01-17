@@ -122,6 +122,7 @@ const Animation: React.FC<WithAsProp<AnimationProps>> & {
     context.theme,
   )
 
+  // TODO: use cache here
   const { classes } = getStyles({
     disableAnimations: context.disableAnimations,
     displayName: Animation.displayName,
